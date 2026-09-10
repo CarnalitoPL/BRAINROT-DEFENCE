@@ -1,0 +1,22 @@
+{
+  "$GMPath":"",
+  "%Name":"Path_Ciudad",
+  "closed":false,
+  "kind":0,
+  "name":"Path_Ciudad",
+  "parent":{
+    "name":"Phats",
+    "path":"folders/Phats.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":0.0,"y":128.0,},
+    {"speed":100.0,"x":256.0,"y":128.0,},
+    {"speed":100.0,"x":256.0,"y":384.0,},
+    {"speed":100.0,"x":1024.0,"y":384.0,},
+    {"speed":100.0,"x":1024.0,"y":128.0,},
+    {"speed":100.0,"x":1366.0,"y":128.0,}
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}

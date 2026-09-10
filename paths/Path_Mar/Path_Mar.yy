@@ -1,0 +1,22 @@
+{
+  "$GMPath":"",
+  "%Name":"Path_Mar",
+  "closed":false,
+  "kind":0,
+  "name":"Path_Mar",
+  "parent":{
+    "name":"Phats",
+    "path":"folders/Phats.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":0.0,"y":300.0,},
+    {"speed":100.0,"x":500.0,"y":300.0,},
+    {"speed":100.0,"x":500.0,"y":500.0,},
+    {"speed":100.0,"x":800.0,"y":500.0,},
+    {"speed":100.0,"x":800.0,"y":300.0,},
+    {"speed":100.0,"x":1366.0,"y":300.0,}
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}

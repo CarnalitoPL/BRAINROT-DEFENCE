@@ -1,0 +1,22 @@
+{
+  "$GMPath":"",
+  "%Name":"Path_Bosque",
+  "closed":false,
+  "kind":0,
+  "name":"Path_Bosque",
+  "parent":{
+    "name":"Phats",
+    "path":"folders/Phats.yy",
+  },
+  "points":[
+    {"speed":100.0,"x":0.0,"y":600.0,},
+    {"speed":100.0,"x":384.0,"y":600.0,},
+    {"speed":100.0,"x":384.0,"y":200.0,},
+    {"speed":100.0,"x":768.0,"y":200.0,},
+    {"speed":100.0,"x":768.0,"y":600.0,},
+    {"speed":100.0,"x":1366.0,"y":600.0,}
+  ],
+  "precision":4,
+  "resourceType":"GMPath",
+  "resourceVersion":"2.0",
+}
