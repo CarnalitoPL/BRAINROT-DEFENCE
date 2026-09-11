@@ -4,3 +4,7 @@ danio = 6;
 cooldown = 40;
 puede_ver_camuflados = true;
 color_placeholder = c_purple;
+spr_up = Spr_Capuchino_Up;
+spr_down = Spr_Capuchino_Down;
+spr_left = Spr_Capuchino_Left;
+spr_right = Spr_Capuchino_Right;

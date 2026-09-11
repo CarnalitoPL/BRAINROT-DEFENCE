@@ -9,8 +9,8 @@
   "name":"Obj_TorreChimpancini",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Chimpancini",
+    "path":"folders/Objetos/Torres/Chimpancini.yy",
   },
   "parentObjectId":{
     "name":"Obj_TowerParent",
@@ -33,7 +33,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_Chimpansini_Down",
+    "path":"sprites/Spr_Chimpansini_Down/Spr_Chimpansini_Down.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

@@ -9,8 +9,8 @@
   "name":"Obj_TorreDinero",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Dinero",
+    "path":"folders/Objetos/Torres/Dinero.yy",
   },
   "parentObjectId":{
     "name":"Obj_TowerParent",

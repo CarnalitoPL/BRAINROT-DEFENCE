@@ -4,6 +4,24 @@ if (global.estado_juego == "jugando") {
         global.estado_juego = "game_over";
     } else if (current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
         global.estado_juego = "victoria";
+    } else {
+        if (estado_oleada == "aviso") {
+            tiempo_aviso--;
+            if (tiempo_aviso <= 0) {
+                estado_oleada = "spawning";
+                var current_wave = waves[current_wave_index];
+                alarm[0] = current_wave[current_subwave_index].delay;
+            }
+        } else if (estado_oleada == "esperando_fin") {
+            if (!instance_exists(Obj_EnemyParent)) {
+                current_wave_index++;
+                global.oleada++;
+                if (current_wave_index < array_length(waves)) {
+                    estado_oleada = "aviso";
+                    tiempo_aviso = 180;
+                }
+            }
+        }
     }
 }
 
@@ -72,20 +90,38 @@ if (global.estado_juego != "jugando") { if (alarm[0] > 0) alarm[0]++; exit; }
 
 // Logica de colocacion tactil / mouse
 if (estado_colocacion > 0) {
-    if (mouse_check_button_pressed(mb_left)) {
-        var torre_obj = noone;
-        var costo = 0;
-        
-        if (estado_colocacion == 1) { torre_obj = Obj_TorreTripleT; costo = 20; }
-        else if (estado_colocacion == 2) { torre_obj = Obj_TorreCapuchino; costo = 30; }
-        else if (estado_colocacion == 3) { torre_obj = Obj_TorreChimpancini; costo = 40; }
-        else if (estado_colocacion == 4) { torre_obj = Obj_TorreDinero; costo = 50; }
-        
-        if (global.dinero >= costo) {
-            instance_create_layer(mouse_x, mouse_y, "Instances", torre_obj);
-            global.dinero -= costo;
+    var mx_g = device_mouse_x_to_gui(0);
+    var my_g = device_mouse_y_to_gui(0);
+    
+    if (mouse_check_button_pressed(mb_right)) {
+        estado_colocacion = 0;
+    } else if (mouse_check_button_pressed(mb_left)) {
+        // Clic en el boton "Cancelar" (Esquina inferior derecha)
+        if (mx_g > 1366 - 150 && mx_g < 1366 - 10 && my_g > 700 && my_g < 750) {
+            estado_colocacion = 0;
+        } 
+        // Clic en el boton "Comprar" para cancelar/alternar
+        else if (mx_g > 10 && mx_g < 110 && my_g > 650 && my_g < 750) {
+            estado_colocacion = 0;
+            menu_tienda_abierto = !menu_tienda_abierto;
+        } 
+        // Colocar la torre
+        else {
+            var torre_obj = noone;
+            var costo = 0;
+            
+            if (estado_colocacion == 1) { torre_obj = Obj_TorreTripleT; costo = 20; }
+            else if (estado_colocacion == 2) { torre_obj = Obj_TorreCapuchino; costo = 30; }
+            else if (estado_colocacion == 3) { torre_obj = Obj_TorreChimpancini; costo = 40; }
+            else if (estado_colocacion == 4) { torre_obj = Obj_TorreDinero; costo = 50; }
+            
+            if (global.dinero >= costo) {
+                var inst = instance_create_layer(mouse_x, mouse_y, "Instances", torre_obj);
+                inst.inversion_total = costo;
+                global.dinero -= costo;
+            }
+            estado_colocacion = 0; // Termina el modo de colocacion
         }
-        estado_colocacion = 0; // Termina el modo de colocacion
     }
 } else {
     // Detectar clics en la interfaz
@@ -93,12 +129,12 @@ if (estado_colocacion > 0) {
         var mx = device_mouse_x_to_gui(0);
         var my = device_mouse_y_to_gui(0);
         
-        // Boton Comprar (10, 700 a 110, 750)
-        if (mx > 10 && mx < 110 && my > 700 && my < 750) {
+        // Boton Comprar (10, 650 a 110, 750)
+        if (mx > 10 && mx < 110 && my > 650 && my < 750) {
             menu_tienda_abierto = !menu_tienda_abierto;
         }
         // Botones de compra (si esta abierto)
-        else if (menu_tienda_abierto && my > 700 && my < 750) {
+        else if (menu_tienda_abierto && my > 650 && my < 750) {
             if (mx > 120 && mx < 220) estado_colocacion = 1;
             else if (mx > 230 && mx < 330) estado_colocacion = 2;
             else if (mx > 340 && mx < 440) estado_colocacion = 3;
@@ -118,21 +154,23 @@ if (mouse_check_button_pressed(mb_left) && instance_exists(torre_seleccionada)) 
     var _ty = torre_seleccionada.y - camera_get_view_y(view_camera[0]);
 
     var _box_w = 140;
-    var _box_h = 90;
+    var _box_h = 130;
     var _bx1 = _tx - (_box_w / 2);
     var _by1 = _ty - 40 - _box_h;
     var _bx2 = _tx + (_box_w / 2);
     var _by2 = _ty - 40;
 
-    var _btn_x1 = _bx1 + 10;
-    var _btn_y1 = _by1 + 40;
-    var _btn_x2 = _bx2 - 10;
-    var _btn_y2 = _by2 - 10;
+    var _btn_upg_y1 = _by1 + 35;
+    var _btn_upg_y2 = _by1 + 70;
+    
+    var _btn_sell_y1 = _by1 + 80;
+    var _btn_sell_y2 = _by1 + 115;
     
     // Si clicamos en el boton de mejorar
-    if (mx >= _btn_x1 && mx <= _btn_x2 && my >= _btn_y1 && my <= _btn_y2) {
+    if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_upg_y1 && my <= _btn_upg_y2) {
         if (global.dinero >= 50) {
             global.dinero -= 50;
+            torre_seleccionada.inversion_total += 50;
             torre_seleccionada.nivel++;
             torre_seleccionada.danio += 2;
             torre_seleccionada.cooldown *= 0.9;
@@ -141,6 +179,13 @@ if (mouse_check_button_pressed(mb_left) && instance_exists(torre_seleccionada)) 
             if (torre_seleccionada.nivel >= 5) torre_seleccionada.perfora_piedra = true;
         }
     } 
+    // Si clicamos en el boton de vender
+    else if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_sell_y1 && my <= _btn_sell_y2) {
+        var venta = round(torre_seleccionada.inversion_total * 0.75);
+        global.dinero += venta;
+        instance_destroy(torre_seleccionada);
+        torre_seleccionada = noone;
+    }
     // Si clicamos fuera del recuadro del menu
     else if (mx < _bx1 || mx > _bx2 || my < _by1 || my > _by2) {
         torre_seleccionada = noone;

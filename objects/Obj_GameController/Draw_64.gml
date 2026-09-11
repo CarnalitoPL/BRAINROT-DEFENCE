@@ -15,42 +15,71 @@ draw_set_color(c_white);
 var txt_pausa = (global.estado_juego == "pausado") ? "Reanudar" : "Pausa";
 draw_text(1260, 20, txt_pausa);
 
+if (global.estado_juego == "jugando" && estado_oleada == "aviso") {
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(c_red);
+    draw_text_transformed(1366/2, 768/2, "OLEADA " + string(global.oleada), 4, 4, 0);
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+}
+
 if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
 
     // Boton "Comprar"
     draw_set_color(menu_tienda_abierto ? c_dkgray : c_gray);
-    draw_rectangle(10, 700, 110, 750, false);
+    draw_rectangle(10, 650, 110, 750, false);
     draw_set_color(c_white);
-    draw_text(60, 725, "Comprar");
+    draw_text(60, 700, "Comprar");
 
     if (menu_tienda_abierto) {
-        // Boton TripleT
-        draw_set_color(c_gray); draw_rectangle(120, 700, 220, 750, false); draw_set_color(c_white);
-        draw_text(170, 715, "TripleT"); draw_text(170, 735, "$20");
-
-        // Boton Capuchino
-        draw_set_color(c_gray); draw_rectangle(230, 700, 330, 750, false); draw_set_color(c_white);
-        draw_text(280, 715, "Capuchino"); draw_text(280, 735, "$30");
-
-        // Boton Chimpancini
-        draw_set_color(c_gray); draw_rectangle(340, 700, 440, 750, false); draw_set_color(c_white);
-        draw_text(390, 715, "Mono"); draw_text(390, 735, "$40");
-
-        // Boton Torre Dinero
-        draw_set_color(c_gray); draw_rectangle(450, 700, 550, 750, false); draw_set_color(c_white);
-        draw_text(500, 715, "T.Dinero"); draw_text(500, 735, "$50");
+        var btn_w = 100;
+        var btn_h = 100;
+        var btn_y = 650;
+        
+        // Función rápida simulada para evitar repetición
+        var _nombres = ["TripleT", "Capuchino", "Mono", "T.Dinero"];
+        var _precios = ["$20", "$30", "$40", "$50"];
+        var _objetos = [Obj_TorreTripleT, Obj_TorreCapuchino, Obj_TorreChimpancini, Obj_TorreDinero];
+        
+        for (var i = 0; i < 4; i++) {
+            var bx = 120 + (i * 110);
+            draw_set_color(c_gray);
+            draw_rectangle(bx, btn_y, bx + btn_w, btn_y + btn_h, false);
+            
+            // Dibujar Sprite base de la torre en la mitad superior
+            var _spr = object_get_sprite(_objetos[i]);
+            if (_spr != -1) {
+                draw_sprite_ext(_spr, 0, bx + (btn_w / 2), btn_y + 35, 0.8, 0.8, 0, c_white, 1);
+            }
+            
+            // Dibujar Textos
+            draw_set_color(c_white);
+            draw_text(bx + (btn_w / 2), btn_y + 65, _nombres[i]);
+            draw_text(bx + (btn_w / 2), btn_y + 85, _precios[i]);
+        }
     }
 
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
 
-    // Mensaje de colocacion
+    // Mensaje de colocacion y Boton de Cancelar
     if (estado_colocacion > 0) {
         draw_set_color(c_yellow);
         draw_text(device_mouse_x_to_gui(0) + 15, device_mouse_y_to_gui(0) - 20, "Colocando...");
+        
+        // Boton Cancelar
+        draw_set_color(c_maroon);
+        draw_rectangle(1366 - 150, 700, 1366 - 10, 750, false);
         draw_set_color(c_white);
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
+        draw_text(1366 - 80, 725, "Cancelar (X)");
+        draw_set_halign(fa_left);
+        draw_set_valign(fa_top);
     }
 
     // Menu de Mejora de Torre
@@ -59,7 +88,7 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         var _ty = torre_seleccionada.y - camera_get_view_y(view_camera[0]);
 
         var _box_w = 140;
-        var _box_h = 90;
+        var _box_h = 130;
         var _bx1 = _tx - (_box_w / 2);
         var _by1 = _ty - 40 - _box_h;
         var _bx2 = _tx + (_box_w / 2);
@@ -74,17 +103,23 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         draw_set_halign(fa_center);
         draw_text(_tx, _by1 + 10, "Nivel: " + string(torre_seleccionada.nivel));
 
-        var _btn_x1 = _bx1 + 10;
-        var _btn_y1 = _by1 + 40;
-        var _btn_x2 = _bx2 - 10;
-        var _btn_y2 = _by2 - 10;
-
+        // Boton Mejorar
+        var _btn_upg_y1 = _by1 + 35;
+        var _btn_upg_y2 = _by1 + 70;
         draw_set_color(c_green);
-        draw_rectangle(_btn_x1, _btn_y1, _btn_x2, _btn_y2, false);
-
+        draw_rectangle(_bx1 + 10, _btn_upg_y1, _bx2 - 10, _btn_upg_y2, false);
         draw_set_color(c_black);
         draw_set_valign(fa_middle);
-        draw_text(_tx, _btn_y1 + (_btn_y2 - _btn_y1) / 2, "Mejorar ($50)");
+        draw_text(_tx, _btn_upg_y1 + 17, "Mejorar ($50)");
+
+        // Boton Vender
+        var _btn_sell_y1 = _by1 + 80;
+        var _btn_sell_y2 = _by1 + 115;
+        draw_set_color(c_maroon);
+        draw_rectangle(_bx1 + 10, _btn_sell_y1, _bx2 - 10, _btn_sell_y2, false);
+        draw_set_color(c_white);
+        var venta = round(torre_seleccionada.inversion_total * 0.75);
+        draw_text(_tx, _btn_sell_y1 + 17, "Vender (+$" + string(venta) + ")");
 
         draw_set_halign(fa_left);
         draw_set_valign(fa_top);

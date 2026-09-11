@@ -21,6 +21,14 @@ else {
         var final_x = path_get_x(_path, final_pos);
         var final_y = path_get_y(_path, final_pos);
         
+        var angulo = point_direction(x, y, final_x, final_y);
+        var dir = round(angulo / 90) mod 4;
+        
+        if (dir == 0) sprite_index = spr_right;
+        else if (dir == 1) sprite_index = spr_up;
+        else if (dir == 2) sprite_index = spr_left;
+        else if (dir == 3) sprite_index = spr_down;
+        
         var trampa = instance_create_layer(final_x, final_y, "Instances", Obj_TrampaPlatano);
         trampa.usos_restantes = 1 + nivel;
         trampa.danio = danio;

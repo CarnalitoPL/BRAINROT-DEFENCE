@@ -8,8 +8,8 @@
   "name":"Obj_TorreBasica",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Torres",
+    "path":"folders/Objetos/Torres.yy",
   },
   "parentObjectId":{
     "name":"Obj_TowerParent",

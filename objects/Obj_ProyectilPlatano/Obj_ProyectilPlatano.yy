@@ -10,8 +10,8 @@
   "name":"Obj_ProyectilPlatano",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Chimpancini",
+    "path":"folders/Objetos/Torres/Chimpancini.yy",
   },
   "parentObjectId":null,
   "persistent":false,

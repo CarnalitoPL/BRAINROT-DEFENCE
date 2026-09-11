@@ -9,8 +9,8 @@
   "name":"Obj_TorreCapuchino",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Capuchino",
+    "path":"folders/Objetos/Torres/Capuchino.yy",
   },
   "parentObjectId":{
     "name":"Obj_TowerParent",
@@ -33,7 +33,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_Capuchino_Down",
+    "path":"sprites/Spr_Capuchino_Down/Spr_Capuchino_Down.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

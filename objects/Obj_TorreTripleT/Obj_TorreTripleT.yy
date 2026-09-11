@@ -8,8 +8,8 @@
   "name":"Obj_TorreTripleT",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"TripleT",
+    "path":"folders/Objetos/Torres/TripleT.yy",
   },
   "parentObjectId":{
     "name":"Obj_TowerParent",
@@ -32,7 +32,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_TripleT_Down",
+    "path":"sprites/Spr_TripleT_Down/Spr_TripleT_Down.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

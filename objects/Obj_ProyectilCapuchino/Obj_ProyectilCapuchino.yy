@@ -10,8 +10,8 @@
   "name":"Obj_ProyectilCapuchino",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objetos",
-    "path":"folders/Objetos.yy",
+    "name":"Capuchino",
+    "path":"folders/Objetos/Torres/Capuchino.yy",
   },
   "parentObjectId":null,
   "persistent":false,

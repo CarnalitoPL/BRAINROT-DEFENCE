@@ -33,3 +33,5 @@ current_subwave_index = 0;
 enemies_spawned_in_subwave = 0;
 menu_tienda_abierto = false;
 pause_sprite = -1;
+estado_oleada = "aviso";
+tiempo_aviso = 180;

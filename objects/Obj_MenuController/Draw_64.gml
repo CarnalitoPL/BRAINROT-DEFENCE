@@ -1,3 +1,8 @@
+var bg = asset_get_index(Spr_FondoMenu);
+if (bg != -1) {
+    draw_sprite_stretched(bg, 0, 0, 0, 1366, 768);
+}
+
 draw_set_font(Fnt_juego); // Applying global font here just in case
 draw_set_color(c_white);
 draw_set_halign(fa_center);

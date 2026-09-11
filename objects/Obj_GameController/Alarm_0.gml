@@ -1,5 +1,4 @@
-if (global.estado_juego != "jugando") {
-    alarm[0] = 60;
+if (global.estado_juego != "jugando" || estado_oleada != "spawning") {
     exit;
 }
 
@@ -19,14 +18,11 @@ if (enemies_spawned_in_subwave >= current_instruction.count) {
     
     if (current_subwave_index >= array_length(current_wave)) {
         current_subwave_index = 0;
-        current_wave_index++;
-        global.oleada++;
-        alarm[0] = 180; // Tiempo entre oleadas
+        estado_oleada = "esperando_fin"; // Se termino de spawnear esta oleada
         exit;
     }
 }
 
-// Ensure the alarm is set for the next spawn, even if it just shifted to a new instruction in the same wave
 if (current_subwave_index < array_length(current_wave)) {
     var next_instruction = current_wave[current_subwave_index];
     alarm[0] = next_instruction.delay;
