@@ -4,9 +4,9 @@ if (bg != -1) {
 }
 
 draw_set_font(Fnt_juego); // Applying global font here just in case
-draw_set_color(c_white);
+draw_set_color(c_red);
 draw_set_halign(fa_center);
-draw_text_transformed(1366/2, 200, "BRAINROT DEFENCE", 3, 3, 0);
+draw_text_transformed(1366/2, 100, "BRAINROT DEFENCE", 3, 3, 0);
 
 if (nivel_guardado != "") {
     // Boton Continuar
