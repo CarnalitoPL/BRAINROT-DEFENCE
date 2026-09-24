@@ -33,7 +33,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_EnemigoPulpo",
+    "path":"sprites/Spr_EnemigoPulpo/Spr_EnemigoPulpo.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

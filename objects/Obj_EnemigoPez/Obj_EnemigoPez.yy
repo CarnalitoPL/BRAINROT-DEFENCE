@@ -32,7 +32,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_EnemigoPez",
+    "path":"sprites/Spr_EnemigoPez/Spr_EnemigoPez.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

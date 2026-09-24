@@ -9,11 +9,8 @@ if (path_position >= 0.99) {
   instance_destroy();
 }
 
-
-
-
-if (x > xprevious) {
-    image_xscale = 1;
-} else if (x < xprevious) {
+if (direction > 90 && direction < 270) {
     image_xscale = -1;
+} else if (direction < 90 || direction > 270) {
+    image_xscale = 1;
 }
