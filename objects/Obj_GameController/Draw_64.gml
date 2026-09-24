@@ -1,12 +1,68 @@
 draw_set_font(Fnt_juego);
-draw_set_color(c_white);
-draw_text(10, 10, "Vida: " + string(global.vida));
-draw_text(10, 30, "Dinero: $" + string(global.dinero));
-if (global.oleada <= global.oleada_maxima) {
-    draw_text(10, 50, "Oleada: " + string(global.oleada) + " / " + string(global.oleada_maxima));
-} else {
-    draw_text(10, 50, "Oleada: FINALIZADA");
+// 1. Barra de Vida Grafica
+var barra_x = 20;
+var barra_y = 20;
+var ancho_total = 200;
+var alto_barra = 30;
+
+// Fondo oscuro
+draw_set_color(c_dkgray);
+draw_rectangle(barra_x, barra_y, barra_x + ancho_total, barra_y + alto_barra, false);
+
+// Barra interior (verde)
+var ancho_actual = clamp((global.vida / global.vida_maxima) * ancho_total, 0, ancho_total);
+draw_set_color(c_green);
+if (ancho_actual > 0) {
+    draw_rectangle(barra_x, barra_y, barra_x + ancho_actual, barra_y + alto_barra, false);
 }
+
+// Borde
+draw_set_color(c_black);
+draw_rectangle(barra_x, barra_y, barra_x + ancho_total, barra_y + alto_barra, true);
+
+// Texto de vida centrado
+draw_set_color(c_white);
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
+draw_text(barra_x + (ancho_total / 2), barra_y + (alto_barra / 2), string(global.vida) + " / " + string(global.vida_maxima));
+
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
+
+// 2. Indicador de Dinero
+draw_set_color(c_yellow);
+// Usamos fa_middle para que y:35 quede alineado con el texto
+draw_set_valign(fa_middle);
+draw_text_transformed(240, 35, "$ " + string(global.dinero), 1.5, 1.5, 0);
+draw_set_valign(fa_top);
+draw_set_color(c_white);
+
+// 3. Contador de Oleadas (Centro Superior)
+var gui_w = display_get_gui_width();
+var oleada_txt = "";
+if (global.oleada <= global.oleada_maxima) {
+    oleada_txt = "Oleada: " + string(global.oleada) + " / " + string(global.oleada_maxima);
+} else {
+    oleada_txt = "Oleada: FINALIZADA";
+}
+
+var txt_w = string_width(oleada_txt) + 20;
+var txt_h = string_height(oleada_txt) + 10;
+var box_x1 = (gui_w / 2) - (txt_w / 2);
+var box_y1 = 25 - (txt_h / 2);
+
+draw_set_color(c_black);
+draw_set_alpha(0.6);
+draw_rectangle(box_x1, box_y1, box_x1 + txt_w, box_y1 + txt_h, false);
+draw_set_alpha(1.0);
+
+draw_set_color(c_white);
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
+draw_text(gui_w / 2, 25, oleada_txt);
+
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
 
 // Boton de Pausa (1250, 10 a 1350, 50)
 draw_set_color(c_gray);

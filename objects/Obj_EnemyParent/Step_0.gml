@@ -11,3 +11,9 @@ if (path_position >= 0.99) {
 
 
 
+
+if (x > xprevious) {
+    image_xscale = 1;
+} else if (x < xprevious) {
+    image_xscale = -1;
+}

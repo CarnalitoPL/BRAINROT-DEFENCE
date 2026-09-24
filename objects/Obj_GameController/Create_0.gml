@@ -1,4 +1,5 @@
-global.vida = 100;
+global.vida_maxima = 100;
+global.vida = global.vida_maxima;
 global.dinero = 50;
 global.oleada = 1;
 alarm[0] = 60; // Spawner timer
