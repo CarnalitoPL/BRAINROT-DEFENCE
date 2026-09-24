@@ -8,7 +8,7 @@
     "TileSerialiseData":[],
   },
   "name":"Tl_Agua",
-  "out_columns":6,
+  "out_columns":8,
   "out_tilehborder":2,
   "out_tilevborder":2,
   "parent":{
@@ -26,13 +26,15 @@
     "name":"Default",
     "path":"texturegroups/Default",
   },
-  "tileAnimationFrames":[],
+  "tileAnimationFrames":[
+    {"$GMTileAnimation":"","%Name":"animation_1","frames":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,],"name":"animation_1","resourceType":"GMTileAnimation","resourceVersion":"2.0",},
+  ],
   "tileAnimationSpeed":15.0,
-  "tileHeight":16,
+  "tileHeight":25,
   "tilehsep":0,
   "tilevsep":0,
-  "tileWidth":16,
+  "tileWidth":25,
   "tilexoff":0,
   "tileyoff":0,
-  "tile_count":36,
+  "tile_count":64,
 }

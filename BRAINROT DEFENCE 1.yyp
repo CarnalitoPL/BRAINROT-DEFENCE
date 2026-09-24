@@ -118,6 +118,7 @@
     {"id":{"name":"Spr_TripleT_Left","path":"sprites/Spr_TripleT_Left/Spr_TripleT_Left.yy",},},
     {"id":{"name":"Spr_TripleT_Right","path":"sprites/Spr_TripleT_Right/Spr_TripleT_Right.yy",},},
     {"id":{"name":"Spr_TripleT_Up","path":"sprites/Spr_TripleT_Up/Spr_TripleT_Up.yy",},},
+    {"id":{"name":"Sprite34","path":"sprites/Sprite34/Sprite34.yy",},},
     {"id":{"name":"Tl_Agua","path":"tilesets/Tl_Agua/Tl_Agua.yy",},},
     {"id":{"name":"Tl_Arbusto","path":"tilesets/Tl_Arbusto/Tl_Arbusto.yy",},},
     {"id":{"name":"Tl_Arbusto2","path":"tilesets/Tl_Arbusto2/Tl_Arbusto2.yy",},},
