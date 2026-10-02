@@ -124,8 +124,9 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
 
     // Mensaje de colocacion y Boton de Cancelar
     if (estado_colocacion > 0) {
-        draw_set_color(c_yellow);
-        draw_text(device_mouse_x_to_gui(0) + 15, device_mouse_y_to_gui(0) - 20, "Colocando...");
+        var _msg = (motivo_invalido == "") ? "Colocando..." : motivo_invalido;
+        draw_set_color((motivo_invalido == "") ? c_yellow : c_red);
+        draw_text(device_mouse_x_to_gui(0) + 15, device_mouse_y_to_gui(0) - 20, _msg);
         
         // Boton Cancelar
         draw_set_color(c_maroon);
