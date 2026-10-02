@@ -205,21 +205,68 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
         draw_text_transformed(1366/2, 150, "¡NIVEL COMPLETADO!", 3, 3, 0);
         draw_text(1366/2, 220, "Puntuacion (Vida restante): " + string(global.vida));
     } else if (global.estado_juego == "pausado") {
-        draw_text_transformed(1366/2, 150, "PAUSA", 3, 3, 0);
-    }
-    
-    // Botones (misma posicion para todos: 1366/2 - 150... y 1366/2 + 10...)
-    draw_set_color(c_maroon);
-    draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
-    draw_set_color(c_teal);
-    draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
-    
-    draw_set_color(c_white);
-    
-    if (global.estado_juego == "pausado") {
-        draw_text(1366/2 - 80, 315, "Reanudar");
-        draw_text(1366/2 + 80, 315, "Salir al Menu");
+        if (!en_ajustes) {
+            draw_text_transformed(1366/2, 150, "PAUSA", 3, 3, 0);
+            
+            draw_set_color(c_maroon);
+            draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
+            draw_set_color(c_teal);
+            draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
+            draw_set_color(c_gray);
+            draw_rectangle(1366/2 - 150, 380, 1366/2 + 150, 430, false);
+            
+            draw_set_color(c_white);
+            draw_text(1366/2 - 80, 315, "Reanudar");
+            draw_text(1366/2 + 80, 315, "Salir al Menu");
+            draw_text(1366/2, 395, "Ajustes");
+        } else {
+            // Menu de Ajustes
+            draw_set_color(c_black);
+            draw_set_alpha(0.8);
+            draw_rectangle(1366/2 - 300, 100, 1366/2 + 300, 600, false);
+            draw_set_alpha(1.0);
+            
+            draw_set_color(c_white);
+            draw_text_transformed(1366/2, 130, "AJUSTES", 2, 2, 0);
+            
+            // Musica
+            draw_text(1366/2, 200, "Musica: " + string(round(global.vol_musica * 100)) + "%");
+            draw_set_color(c_gray);
+            draw_rectangle(1366/2 - 150, 185, 1366/2 - 100, 235, false); // [-]
+            draw_rectangle(1366/2 + 100, 185, 1366/2 + 150, 235, false); // [+]
+            draw_set_color(c_black);
+            draw_text(1366/2 - 125, 195, "-");
+            draw_text(1366/2 + 125, 195, "+");
+            
+            // SFX
+            draw_set_color(c_white);
+            draw_text(1366/2, 280, "SFX: " + string(round(global.vol_sfx * 100)) + "%");
+            draw_set_color(c_gray);
+            draw_rectangle(1366/2 - 150, 265, 1366/2 - 100, 315, false); // [-]
+            draw_rectangle(1366/2 + 100, 265, 1366/2 + 150, 315, false); // [+]
+            draw_set_color(c_black);
+            draw_text(1366/2 - 125, 275, "-");
+            draw_text(1366/2 + 125, 275, "+");
+            
+            // Pantalla Completa
+            var txt_fs = global.fullscreen ? "Pantalla Completa: SI" : "Pantalla Completa: NO";
+            draw_set_color(c_teal);
+            draw_rectangle(1366/2 - 200, 350, 1366/2 + 200, 400, false);
+            draw_set_color(c_black);
+            draw_text(1366/2, 360, txt_fs);
+            
+            // Boton Volver
+            draw_set_color(c_maroon);
+            draw_rectangle(1366/2 - 150, 450, 1366/2 + 150, 500, false);
+            draw_set_color(c_white);
+            draw_text(1366/2, 460, "VOLVER");
+        }
     } else {
+        draw_set_color(c_maroon);
+        draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
+        draw_set_color(c_teal);
+        draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
+        draw_set_color(c_white);
         draw_text(1366/2 - 80, 315, "Reiniciar");
         if (global.estado_juego == "victoria" && room != Rm_Mar) {
             draw_text(1366/2 + 80, 315, "Continuar");

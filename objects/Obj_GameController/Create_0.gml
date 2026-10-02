@@ -36,3 +36,12 @@ menu_tienda_abierto = false;
 pause_sprite = -1;
 estado_oleada = "aviso";
 tiempo_aviso = 180;
+
+audio_stop_all();
+var snd_mus = asset_get_index(Snd_MusicaDeFondo);
+if (snd_mus != -1) {
+    var snd = audio_play_sound(snd_mus, 1, true);
+    audio_sound_gain(snd, global.vol_musica, 0);
+}
+
+en_ajustes = false;

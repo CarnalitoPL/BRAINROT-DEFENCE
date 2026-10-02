@@ -33,6 +33,13 @@ else {
         trampa.usos_restantes = 1 + nivel;
         trampa.danio = danio;
         trampa.perfora_piedra = perfora_piedra;
+        
+        var snd = asset_get_index(Snd_PLatanoActivado);
+        if (snd != -1) {
+            var s = audio_play_sound(snd, 1, false);
+            audio_sound_gain(s, global.vol_sfx, 0);
+        }
+        
         cd_actual = cooldown;
     }
 }

@@ -29,6 +29,12 @@ if (target != noone) {
         var bate = instance_create_layer(x + lengthdir_x(20, angulo), y + lengthdir_y(20, angulo), "Instances", Obj_EfectoBate);
         bate.angulo = angulo;
         
+        var snd_golpe = asset_get_index(Snd_TripleTGolpe);
+        if (snd_golpe != -1) {
+            var snd = audio_play_sound(snd_golpe, 1, false);
+            audio_sound_gain(snd, global.vol_sfx, 0);
+        }
+        
         cd_actual = cooldown;
     }
 }

@@ -2,8 +2,12 @@
 if (global.estado_juego == "jugando") {
     if (global.vida <= 0) {
         global.estado_juego = "game_over";
+        var snd = asset_get_index(Snd_MusicaDerrota);
+        if (snd != -1) { var s = audio_play_sound(snd, 1, false); audio_sound_gain(s, global.vol_sfx, 0); }
     } else if (current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
         global.estado_juego = "victoria";
+        var snd = asset_get_index(Snd_MusicaVictoria);
+        if (snd != -1) { var s = audio_play_sound(snd, 1, false); audio_sound_gain(s, global.vol_sfx, 0); }
     } else {
         if (estado_oleada == "aviso") {
             tiempo_aviso--;
@@ -46,20 +50,62 @@ if (mouse_check_button_pressed(mb_left)) {
     
     // Si estamos en Pausa, detectar botones
     if (global.estado_juego == "pausado") {
-        // "Reanudar": x=1366/2 - 150 a 1366/2 - 10, y=300 a 350
-        if (mx > 1366/2 - 150 && mx < 1366/2 - 10 && my > 300 && my < 350) {
-            global.estado_juego = "jugando";
-            instance_activate_all();
-            if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
-        }
-        // "Salir al Menu": x=1366/2 + 10 a 1366/2 + 150, y=300 a 350
-        if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
-            ini_open("save.ini");
-            ini_write_string("Progreso", "Nivel", room_get_name(room));
-            ini_close();
-            instance_activate_all();
-            if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
-            room_goto(Rm_MenuInit);
+        if (!en_ajustes) {
+            // "Reanudar": x=1366/2 - 150 a 1366/2 - 10, y=300 a 350
+            if (mx > 1366/2 - 150 && mx < 1366/2 - 10 && my > 300 && my < 350) {
+                global.estado_juego = "jugando";
+                instance_activate_all();
+                if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
+            }
+            // "Salir al Menu": x=1366/2 + 10 a 1366/2 + 150, y=300 a 350
+            if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
+                ini_open("save.ini");
+                ini_write_string("Progreso", "Nivel", room_get_name(room));
+                ini_close();
+                instance_activate_all();
+                if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
+                room_goto(Rm_MenuInit);
+            }
+            // "Ajustes": x=1366/2 - 150 a 1366/2 + 150, y=380 a 430
+            if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 380 && my < 430) {
+                en_ajustes = true;
+            }
+        } else {
+            // Logica Ajustes
+            // Musica [-]
+            if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 185 && my < 235) {
+                global.vol_musica = clamp(global.vol_musica - 0.1, 0, 1);
+                var snd_mus = asset_get_index(Snd_MusicaDeFondo);
+                if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+            }
+            // Musica [+]
+            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 185 && my < 235) {
+                global.vol_musica = clamp(global.vol_musica + 0.1, 0, 1);
+                var snd_mus = asset_get_index(Snd_MusicaDeFondo);
+                if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+            }
+            // SFX [-]
+            else if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 265 && my < 315) {
+                global.vol_sfx = clamp(global.vol_sfx - 0.1, 0, 1);
+            }
+            // SFX [+]
+            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 265 && my < 315) {
+                global.vol_sfx = clamp(global.vol_sfx + 0.1, 0, 1);
+            }
+            // Pantalla Completa
+            else if (mx > 1366/2 - 200 && mx < 1366/2 + 200 && my > 350 && my < 400) {
+                global.fullscreen = !global.fullscreen;
+                window_set_fullscreen(global.fullscreen);
+            }
+            // Volver
+            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 450 && my < 500) {
+                ini_open("save.ini");
+                ini_write_real("Config", "Musica", global.vol_musica);
+                ini_write_real("Config", "SFX", global.vol_sfx);
+                ini_write_real("Config", "Fullscreen", global.fullscreen);
+                ini_close();
+                en_ajustes = false;
+            }
         }
         exit;
     }
@@ -119,6 +165,12 @@ if (estado_colocacion > 0) {
                 var inst = instance_create_layer(mouse_x, mouse_y, "Instances", torre_obj);
                 inst.inversion_total = costo;
                 global.dinero -= costo;
+                
+                var snd_poner = asset_get_index(Snd_PonerTorre);
+                if (snd_poner != -1) {
+                    var snd = audio_play_sound(snd_poner, 2, false);
+                    audio_sound_gain(snd, global.vol_sfx, 0);
+                }
             }
             estado_colocacion = 0; // Termina el modo de colocacion
         }
@@ -135,12 +187,20 @@ if (estado_colocacion > 0) {
         }
         // Botones de compra (si esta abierto)
         else if (menu_tienda_abierto && my > 650 && my < 750) {
-            if (mx > 120 && mx < 220) estado_colocacion = 1;
-            else if (mx > 230 && mx < 330) estado_colocacion = 2;
-            else if (mx > 340 && mx < 440) estado_colocacion = 3;
-            else if (mx > 450 && mx < 550) estado_colocacion = 4;
+            var selected = false;
+            if (mx > 120 && mx < 220) { estado_colocacion = 1; selected = true; }
+            else if (mx > 230 && mx < 330) { estado_colocacion = 2; selected = true; }
+            else if (mx > 340 && mx < 440) { estado_colocacion = 3; selected = true; }
+            else if (mx > 450 && mx < 550) { estado_colocacion = 4; selected = true; }
             
-            if (estado_colocacion > 0) menu_tienda_abierto = false; // Cierra menu al seleccionar
+            if (selected) {
+                menu_tienda_abierto = false; // Cierra menu al seleccionar
+                var snd_comp = asset_get_index("Snd_Comprar");
+                if (snd_comp != -1) {
+                    var snd = audio_play_sound(snd_comp, 2, false);
+                    audio_sound_gain(snd, global.vol_sfx, 0);
+                }
+            }
         }
     }
 }
@@ -177,6 +237,12 @@ if (mouse_check_button_pressed(mb_left) && instance_exists(torre_seleccionada)) 
             
             if (torre_seleccionada.nivel >= 3) torre_seleccionada.puede_ver_camuflados = true;
             if (torre_seleccionada.nivel >= 5) torre_seleccionada.perfora_piedra = true;
+            
+            var snd_comp = asset_get_index("Snd_Comprar");
+            if (snd_comp != -1) {
+                var snd = audio_play_sound(snd_comp, 2, false);
+                audio_sound_gain(snd, global.vol_sfx, 0);
+            }
         }
     } 
     // Si clicamos en el boton de vender

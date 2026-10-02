@@ -6,6 +6,11 @@ if (hp <= 0) {
 }
 if (path_position >= 0.99) {
   global.vida -= 10;
+  var snd = asset_get_index(Snd_RestarVida);
+  if (snd != -1) {
+      var s = audio_play_sound(snd, 1, false);
+      audio_sound_gain(s, global.vol_sfx, 0);
+  }
   instance_destroy();
 }
 
