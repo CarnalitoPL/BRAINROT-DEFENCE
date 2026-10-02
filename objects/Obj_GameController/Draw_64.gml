@@ -96,26 +96,23 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         var btn_h = 100;
         var btn_y = 650;
         
-        // Función rápida simulada para evitar repetición
-        var _nombres = ["TripleT", "Capuchino", "Mono", "T.Dinero"];
-        var _precios = ["$20", "$30", "$40", "$50"];
-        var _objetos = [Obj_TorreTripleT, Obj_TorreCapuchino, Obj_TorreChimpancini, Obj_TorreDinero];
-        
         for (var i = 0; i < 4; i++) {
+            var _info = torres_info[i + 1];
             var bx = 120 + (i * 110);
             draw_set_color(c_gray);
             draw_rectangle(bx, btn_y, bx + btn_w, btn_y + btn_h, false);
-            
+
             // Dibujar Sprite base de la torre en la mitad superior
-            var _spr = object_get_sprite(_objetos[i]);
+            var _spr = object_get_sprite(_info.obj);
             if (_spr != -1) {
                 draw_sprite_ext(_spr, 0, bx + (btn_w / 2), btn_y + 35, 0.8, 0.8, 0, c_white, 1);
             }
-            
-            // Dibujar Textos
+
+            // Dibujar Textos (precio en rojo si no alcanza el dinero)
             draw_set_color(c_white);
-            draw_text(bx + (btn_w / 2), btn_y + 65, _nombres[i]);
-            draw_text(bx + (btn_w / 2), btn_y + 85, _precios[i]);
+            draw_text(bx + (btn_w / 2), btn_y + 65, _info.nombre);
+            draw_set_color((global.dinero >= _info.costo) ? c_white : c_red);
+            draw_text(bx + (btn_w / 2), btn_y + 85, "$" + string(_info.costo));
         }
     }
 
@@ -163,11 +160,13 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         // Boton Mejorar
         var _btn_upg_y1 = _by1 + 35;
         var _btn_upg_y2 = _by1 + 70;
-        draw_set_color(c_green);
+        var _es_max = torre_seleccionada.nivel >= nivel_max_torre;
+        var _costo_mejora = costo_mejora(torre_seleccionada);
+        draw_set_color((_es_max || global.dinero < _costo_mejora) ? c_dkgray : c_green);
         draw_rectangle(_bx1 + 10, _btn_upg_y1, _bx2 - 10, _btn_upg_y2, false);
         draw_set_color(c_black);
         draw_set_valign(fa_middle);
-        draw_text(_tx, _btn_upg_y1 + 17, "Mejorar ($50)");
+        draw_text(_tx, _btn_upg_y1 + 17, _es_max ? "Nivel MAX" : "Mejorar ($" + string(_costo_mejora) + ")");
 
         // Boton Vender
         var _btn_sell_y1 = _by1 + 80;
@@ -175,7 +174,7 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         draw_set_color(c_maroon);
         draw_rectangle(_bx1 + 10, _btn_sell_y1, _bx2 - 10, _btn_sell_y2, false);
         draw_set_color(c_white);
-        var venta = round(torre_seleccionada.inversion_total * 0.75);
+        var venta = round(torre_seleccionada.inversion_total * porcentaje_venta);
         draw_text(_tx, _btn_sell_y1 + 17, "Vender (+$" + string(venta) + ")");
 
         draw_set_halign(fa_left);
@@ -272,7 +271,7 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
         draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
         draw_set_color(c_white);
         draw_text(1366/2 - 80, 315, "Reiniciar");
-        if (global.estado_juego == "victoria" && room != Rm_Mar) {
+        if (global.estado_juego == "victoria" && siguiente_nivel != noone) {
             draw_text(1366/2 + 80, 315, "Continuar");
         } else {
             draw_text(1366/2 + 80, 315, "Menu Principal");

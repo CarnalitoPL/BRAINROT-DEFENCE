@@ -10,3 +10,4 @@ spr_down = sprite_index;
 spr_left = sprite_index;
 spr_right = sprite_index;
 inversion_total = 0;
+costo_base = 0; // Precio de compra; lo asigna Obj_GameController al colocarla

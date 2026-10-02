@@ -8,6 +8,12 @@ if (global.estado_juego == "jugando") {
         global.estado_juego = "victoria";
         audio_stop_sound(musica_actual);
         musica_actual = audio_play_sound(Snd_MusicaVictoria, 1, false, global.vol_musica);
+
+        // Guardar progreso: "Continuar" del menu lleva al siguiente nivel
+        ini_open("save.ini");
+        if (siguiente_nivel != noone) ini_write_string("Progreso", "Nivel", room_get_name(siguiente_nivel));
+        else ini_section_delete("Progreso"); // Juego completado
+        ini_close();
     } else {
         if (estado_oleada == "aviso") {
             tiempo_aviso--;
@@ -21,6 +27,7 @@ if (global.estado_juego == "jugando") {
                 current_wave_index++;
                 global.oleada++;
                 if (current_wave_index < array_length(waves)) {
+                    global.dinero += bonus_oleada_base + bonus_oleada_extra * current_wave_index;
                     estado_oleada = "aviso";
                     tiempo_aviso = 180;
                 }
@@ -117,10 +124,8 @@ if (mouse_check_button_pressed(mb_left)) {
         }
         // Boton Continuar / Menu
         if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
-            if (global.estado_juego == "victoria") {
-                if (room == Rm_Ciudad) room_goto(Rm_Bosque);
-                else if (room == Rm_Bosque) room_goto(Rm_Mar);
-                else room_goto(Rm_MenuInit);
+            if (global.estado_juego == "victoria" && siguiente_nivel != noone) {
+                room_goto(siguiente_nivel);
             } else {
                 room_goto(Rm_MenuInit);
             }
@@ -139,13 +144,8 @@ if (estado_colocacion > 0) {
     var mx_g = device_mouse_x_to_gui(0);
     var my_g = device_mouse_y_to_gui(0);
 
-    var torre_obj = noone;
-    var costo = 0;
-
-    if (estado_colocacion == 1) { torre_obj = Obj_TorreTripleT; costo = 20; }
-    else if (estado_colocacion == 2) { torre_obj = Obj_TorreCapuchino; costo = 30; }
-    else if (estado_colocacion == 3) { torre_obj = Obj_TorreChimpancini; costo = 40; }
-    else if (estado_colocacion == 4) { torre_obj = Obj_TorreDinero; costo = 50; }
+    var torre_obj = torres_info[estado_colocacion].obj;
+    var costo = torres_info[estado_colocacion].costo;
 
     motivo_invalido = motivo_colocacion_invalida(mouse_x, mouse_y, mx_g, my_g, costo);
 
@@ -166,6 +166,7 @@ if (estado_colocacion > 0) {
         else if (motivo_invalido == "") {
             var inst = instance_create_layer(mouse_x, mouse_y, "Instances", torre_obj);
             inst.inversion_total = costo;
+            inst.costo_base = costo;
             global.dinero -= costo;
             audio_play_sound(Snd_PonerTorre, 2, false, global.vol_sfx);
             estado_colocacion = 0; // Termina el modo de colocacion
@@ -222,9 +223,10 @@ if (mouse_check_button_pressed(mb_left) && !clic_consumido && instance_exists(to
     
     // Si clicamos en el boton de mejorar
     if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_upg_y1 && my <= _btn_upg_y2) {
-        if (global.dinero >= 50) {
-            global.dinero -= 50;
-            torre_seleccionada.inversion_total += 50;
+        var _costo_mejora = costo_mejora(torre_seleccionada);
+        if (torre_seleccionada.nivel < nivel_max_torre && global.dinero >= _costo_mejora) {
+            global.dinero -= _costo_mejora;
+            torre_seleccionada.inversion_total += _costo_mejora;
             torre_seleccionada.nivel++;
             torre_seleccionada.danio += 2;
             torre_seleccionada.cooldown *= 0.9;
@@ -237,7 +239,7 @@ if (mouse_check_button_pressed(mb_left) && !clic_consumido && instance_exists(to
     } 
     // Si clicamos en el boton de vender
     else if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_sell_y1 && my <= _btn_sell_y2) {
-        var venta = round(torre_seleccionada.inversion_total * 0.75);
+        var venta = round(torre_seleccionada.inversion_total * porcentaje_venta);
         global.dinero += venta;
         instance_destroy(torre_seleccionada);
         torre_seleccionada = noone;

@@ -1,12 +1,7 @@
 if (estado_colocacion > 0) {
-    var _obj = noone;
-    var _rango = 100;
-    
-    if (estado_colocacion == 1) { _obj = Obj_TorreTripleT; _rango = 60; }
-    else if (estado_colocacion == 2) { _obj = Obj_TorreCapuchino; _rango = 100; }
-    else if (estado_colocacion == 3) { _obj = Obj_TorreChimpancini; _rango = 150; }
-    else if (estado_colocacion == 4) { _obj = Obj_TorreDinero; _rango = 100; }
-    
+    var _obj = torres_info[estado_colocacion].obj;
+    var _rango = torres_info[estado_colocacion].rango;
+
     if (_obj != noone) {
         // Rojo si la posicion no es valida
         var _col = (motivo_invalido == "") ? c_white : c_red;

@@ -1,6 +1,6 @@
 global.vida_maxima = 100;
 global.vida = global.vida_maxima;
-global.dinero = 50;
+global.dinero = 60; // Se ajusta por nivel mas abajo
 global.oleada = 1;
 alarm[0] = 60; // Spawner timer
 estado_colocacion = 0;
@@ -8,16 +8,22 @@ torre_seleccionada = noone;
 global.estado_juego = "jugando";
 
 waves = [];
+siguiente_nivel = noone; // Room a la que lleva "Continuar" al ganar (noone = ultimo nivel)
 
 if (room == Rm_Ciudad) {
+    global.dinero = 60;
+    siguiente_nivel = Rm_Bosque;
     waves[0] = [ {obj: Obj_EnemigoPez, count: 5, delay: 60} ];
     waves[1] = [ {obj: Obj_EnemigoPez, count: 10, delay: 45} ];
     waves[2] = [ {obj: Obj_EnemigoPez, count: 15, delay: 30} ];
 } else if (room == Rm_Bosque) {
+    global.dinero = 100;
+    siguiente_nivel = Rm_Mar;
     waves[0] = [ {obj: Obj_EnemigoPez, count: 5, delay: 45}, {obj: Obj_EnemigoPezPiedra, count: 2, delay: 60} ];
     waves[1] = [ {obj: Obj_EnemigoPez, count: 10, delay: 40}, {obj: Obj_EnemigoPulpo, count: 3, delay: 50} ];
     waves[2] = [ {obj: Obj_EnemigoPez, count: 10, delay: 30}, {obj: Obj_EnemigoPezPiedra, count: 5, delay: 40}, {obj: Obj_EnemigoPulpo, count: 5, delay: 40} ];
 } else if (room == Rm_Mar) {
+    global.dinero = 150;
     waves[0] = [ {obj: Obj_EnemigoPez, count: 10, delay: 30}, {obj: Obj_EnemigoPezPiedra, count: 5, delay: 40} ];
     waves[1] = [ {obj: Obj_EnemigoPulpo, count: 10, delay: 40} ];
     waves[2] = [ {obj: Obj_EnemigoPezPiedra, count: 10, delay: 30}, {obj: Obj_EnemigoPulpo, count: 10, delay: 30} ];
@@ -28,6 +34,25 @@ if (room == Rm_Ciudad) {
 }
 
 global.oleada_maxima = array_length(waves);
+
+// ================= Economia =================
+// Datos de la tienda, indexados por estado_colocacion (1-4)
+torres_info = [
+    noone,
+    { obj: Obj_TorreTripleT,     nombre: "TripleT",   costo: 20, rango: 60 },
+    { obj: Obj_TorreCapuchino,   nombre: "Capuchino", costo: 30, rango: 100 },
+    { obj: Obj_TorreChimpancini, nombre: "Mono",      costo: 40, rango: 150 },
+    { obj: Obj_TorreDinero,      nombre: "T.Dinero",  costo: 60, rango: 100 }
+];
+nivel_max_torre = 5;    // Nivel 3: ve camuflados, nivel 5: perfora piedra
+porcentaje_venta = 0.75;
+bonus_oleada_base = 10; // Bonus al superar una oleada: base + extra * oleadas superadas
+bonus_oleada_extra = 5;
+
+// Costo de subir una torre al siguiente nivel: escala con su precio y su nivel actual
+costo_mejora = function(_torre) {
+    return _torre.costo_base * _torre.nivel;
+}
 
 current_wave_index = 0;
 current_subwave_index = 0;
