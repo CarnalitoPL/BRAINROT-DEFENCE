@@ -262,7 +262,10 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
             draw_set_color(c_white);
             draw_text(1366/2, 460, "VOLVER");
         }
-    } else {
+    }
+
+    // Botones de Victoria / Game Over
+    if (global.estado_juego == "game_over" || global.estado_juego == "victoria") {
         draw_set_color(c_maroon);
         draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
         draw_set_color(c_teal);
