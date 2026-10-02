@@ -2,12 +2,12 @@
 if (global.estado_juego == "jugando") {
     if (global.vida <= 0) {
         global.estado_juego = "game_over";
-        var snd = asset_get_index(Snd_MusicaDerrota);
-        if (snd != -1) { var s = audio_play_sound(snd, 1, false); audio_sound_gain(s, global.vol_sfx, 0); }
+        audio_stop_sound(musica_actual);
+        musica_actual = audio_play_sound(Snd_MusicaDerrota, 1, false, global.vol_musica);
     } else if (current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
         global.estado_juego = "victoria";
-        var snd = asset_get_index(Snd_MusicaVictoria);
-        if (snd != -1) { var s = audio_play_sound(snd, 1, false); audio_sound_gain(s, global.vol_sfx, 0); }
+        audio_stop_sound(musica_actual);
+        musica_actual = audio_play_sound(Snd_MusicaVictoria, 1, false, global.vol_musica);
     } else {
         if (estado_oleada == "aviso") {
             tiempo_aviso--;
@@ -43,6 +43,7 @@ if (mouse_check_button_pressed(mb_left)) {
             instance_deactivate_all(true);
         } else if (global.estado_juego == "pausado") {
             global.estado_juego = "jugando";
+            en_ajustes = false; // Si se reanuda desde Ajustes, la proxima pausa abre el menu normal
             instance_activate_all();
             if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
         }
@@ -75,14 +76,12 @@ if (mouse_check_button_pressed(mb_left)) {
             // Musica [-]
             if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 185 && my < 235) {
                 global.vol_musica = clamp(global.vol_musica - 0.1, 0, 1);
-                var snd_mus = asset_get_index(Snd_MusicaDeFondo);
-                if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+                if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
             }
             // Musica [+]
             else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 185 && my < 235) {
                 global.vol_musica = clamp(global.vol_musica + 0.1, 0, 1);
-                var snd_mus = asset_get_index(Snd_MusicaDeFondo);
-                if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+                if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
             }
             // SFX [-]
             else if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 265 && my < 315) {
@@ -166,11 +165,7 @@ if (estado_colocacion > 0) {
                 inst.inversion_total = costo;
                 global.dinero -= costo;
                 
-                var snd_poner = asset_get_index(Snd_PonerTorre);
-                if (snd_poner != -1) {
-                    var snd = audio_play_sound(snd_poner, 2, false);
-                    audio_sound_gain(snd, global.vol_sfx, 0);
-                }
+                audio_play_sound(Snd_PonerTorre, 2, false, global.vol_sfx);
             }
             estado_colocacion = 0; // Termina el modo de colocacion
         }
@@ -195,11 +190,7 @@ if (estado_colocacion > 0) {
             
             if (selected) {
                 menu_tienda_abierto = false; // Cierra menu al seleccionar
-                var snd_comp = asset_get_index("Snd_Comprar");
-                if (snd_comp != -1) {
-                    var snd = audio_play_sound(snd_comp, 2, false);
-                    audio_sound_gain(snd, global.vol_sfx, 0);
-                }
+                audio_play_sound(Snd_PresionarBtn, 2, false, global.vol_sfx);
             }
         }
     }
@@ -237,12 +228,8 @@ if (mouse_check_button_pressed(mb_left) && instance_exists(torre_seleccionada)) 
             
             if (torre_seleccionada.nivel >= 3) torre_seleccionada.puede_ver_camuflados = true;
             if (torre_seleccionada.nivel >= 5) torre_seleccionada.perfora_piedra = true;
-            
-            var snd_comp = asset_get_index("Snd_Comprar");
-            if (snd_comp != -1) {
-                var snd = audio_play_sound(snd_comp, 2, false);
-                audio_sound_gain(snd, global.vol_sfx, 0);
-            }
+
+            audio_play_sound(Snd_PresionarBtn, 2, false, global.vol_sfx);
         }
     } 
     // Si clicamos en el boton de vender

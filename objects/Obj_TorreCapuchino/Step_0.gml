@@ -27,11 +27,7 @@ if (target != noone) {
         proj.danio = danio;
         proj.perfora_piedra = perfora_piedra;
         
-        var snd_disp = asset_get_index(Snd_CapuchinoGolpe);
-        if (snd_disp != -1) {
-            var snd = audio_play_sound(snd_disp, 1, false);
-            audio_sound_gain(snd, global.vol_sfx, 0);
-        }
+        audio_play_sound(Snd_CapuchinoGolpe, 1, false, global.vol_sfx);
         
         cd_actual = cooldown;
     }

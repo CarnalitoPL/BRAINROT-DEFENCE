@@ -9,8 +9,4 @@ window_set_fullscreen(global.fullscreen);
 en_ajustes = false;
 
 audio_stop_all();
-var snd_mus = asset_get_index("Snd_MusicaMenu");
-if (snd_mus != -1) {
-    var snd = audio_play_sound(snd_mus, 1, true);
-    audio_sound_gain(snd, global.vol_musica, 0);
-}
+musica_actual = audio_play_sound(Snd_MusicaDeFondo, 1, true, global.vol_musica);

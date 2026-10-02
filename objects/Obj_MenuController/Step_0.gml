@@ -12,13 +12,18 @@ if (mouse_check_button_pressed(mb_left)) {
             }
             // Clic en Nueva Partida
             else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 480 && my < 560) {
-                if (file_exists("save.ini")) file_delete("save.ini");
+                // Solo se borra el progreso; los ajustes [Config] se conservan
+                ini_open("save.ini");
+                ini_section_delete("Progreso");
+                ini_close();
                 room_goto(Rm_Ciudad);
             }
         } else {
             // Clic en Jugar
             if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 400 && my < 480) {
-                if (file_exists("save.ini")) file_delete("save.ini");
+                ini_open("save.ini");
+                ini_section_delete("Progreso");
+                ini_close();
                 room_goto(Rm_Ciudad);
             }
         }
@@ -32,14 +37,12 @@ if (mouse_check_button_pressed(mb_left)) {
         // Musica [-]
         if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 335 && my < 385) {
             global.vol_musica = clamp(global.vol_musica - 0.1, 0, 1);
-            var snd_mus = asset_get_index("Snd_MusicaMenu");
-            if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+            if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
         }
         // Musica [+]
         else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 335 && my < 385) {
             global.vol_musica = clamp(global.vol_musica + 0.1, 0, 1);
-            var snd_mus = asset_get_index("Snd_MusicaMenu");
-            if (snd_mus != -1 && audio_is_playing(snd_mus)) audio_sound_gain(snd_mus, global.vol_musica, 0);
+            if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
         }
         // SFX [-]
         else if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 415 && my < 465) {
