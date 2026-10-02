@@ -277,6 +277,24 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
             draw_text(1366/2 + 80, 315, "Menu Principal");
         }
     }
-    
+
     draw_set_halign(fa_left);
+}
+
+// Oscurecimiento mientras se mantiene R para reiniciar (encima de todo)
+if (tiempo_reinicio > 0) {
+    var _gw = display_get_gui_width();
+    var _gh = display_get_gui_height();
+    draw_set_alpha(tiempo_reinicio / duracion_reinicio);
+    draw_set_color(c_black);
+    draw_rectangle(0, 0, _gw, _gh, false);
+
+    draw_set_color(c_white);
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_text_transformed(_gw / 2, _gh / 2, "Reiniciando...", 2, 2, 0);
+
+    draw_set_alpha(1.0);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
 }

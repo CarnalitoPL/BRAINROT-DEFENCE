@@ -7,6 +7,10 @@ estado_colocacion = 0;
 torre_seleccionada = noone;
 global.estado_juego = "jugando";
 
+// Reinicio rapido: mantener R oscurece la pantalla y reinicia el nivel
+tiempo_reinicio = 0;
+duracion_reinicio = game_get_speed(gamespeed_fps) * 3; // 3 segundos
+
 waves = [];
 siguiente_nivel = noone; // Room a la que lleva "Continuar" al ganar (noone = ultimo nivel)
 

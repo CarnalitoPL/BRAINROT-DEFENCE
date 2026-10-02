@@ -1,3 +1,18 @@
+// Reinicio rapido: mantener R durante 3 segundos (funciona tambien en pausa y en las pantallas finales)
+if (keyboard_check(ord("R"))) {
+    tiempo_reinicio++;
+    if (tiempo_reinicio >= duracion_reinicio) {
+        if (global.estado_juego == "pausado") {
+            instance_activate_all();
+            if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
+        }
+        room_restart();
+        exit;
+    }
+} else {
+    tiempo_reinicio = 0; // Al soltar R la pantalla vuelve a la normalidad
+}
+
 // Condiciones de victoria y derrota
 if (global.estado_juego == "jugando") {
     if (global.vida <= 0) {
