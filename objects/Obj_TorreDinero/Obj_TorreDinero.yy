@@ -33,7 +33,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_TorreDinero",
+    "path":"sprites/Spr_TorreDinero/Spr_TorreDinero.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

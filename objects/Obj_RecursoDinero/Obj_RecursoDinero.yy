@@ -31,7 +31,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"Spr_RecursoDinero",
+    "path":"sprites/Spr_RecursoDinero/Spr_RecursoDinero.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }
