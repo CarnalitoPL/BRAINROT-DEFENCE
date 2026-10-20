@@ -21,6 +21,7 @@ if (global.estado_juego == "jugando") {
         musica_actual = audio_play_sound(Snd_MusicaDerrota, 1, false, global.vol_musica);
     } else if (current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
         global.estado_juego = "victoria";
+        tiempo_victoria = 35;
         audio_stop_sound(musica_actual);
         musica_actual = audio_play_sound(Snd_MusicaVictoria, 1, false, global.vol_musica);
 
@@ -48,6 +49,29 @@ if (global.estado_juego == "jugando") {
                 }
             }
         }
+    }
+}
+
+// Cuenta regresiva para mostrar la historia al terminar el nivel
+if (global.estado_juego == "victoria" && tiempo_victoria > 0) {
+    tiempo_victoria--;
+    if (tiempo_victoria <= 0) {
+        if (room == Rm_Ciudad) {
+            global.historia_sprite = Spr_HistoriaAlTerminarNivel1;
+            global.historia_siguiente_room = Rm_Bosque;
+            room_goto(Rm_Historia);
+        } else if (room == Rm_Bosque) {
+            global.historia_sprite = Spr_HistoriaAlTerminarNivel2;
+            global.historia_siguiente_room = Rm_Mar;
+            room_goto(Rm_Historia);
+        } else if (room == Rm_Mar) {
+            global.historia_sprite = Spr_HistoriaAlTerminarNivel3;
+            global.historia_siguiente_room = Rm_MenuInit;
+            room_goto(Rm_Historia);
+        } else {
+            room_goto(Rm_MenuInit);
+        }
+        exit;
     }
 }
 
@@ -139,8 +163,22 @@ if (mouse_check_button_pressed(mb_left)) {
         }
         // Boton Continuar / Menu
         if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
-            if (global.estado_juego == "victoria" && siguiente_nivel != noone) {
-                room_goto(siguiente_nivel);
+            if (global.estado_juego == "victoria") {
+                if (room == Rm_Ciudad) {
+                    global.historia_sprite = Spr_HistoriaAlTerminarNivel1;
+                    global.historia_siguiente_room = Rm_Bosque;
+                    room_goto(Rm_Historia);
+                } else if (room == Rm_Bosque) {
+                    global.historia_sprite = Spr_HistoriaAlTerminarNivel2;
+                    global.historia_siguiente_room = Rm_Mar;
+                    room_goto(Rm_Historia);
+                } else if (room == Rm_Mar) {
+                    global.historia_sprite = Spr_HistoriaAlTerminarNivel3;
+                    global.historia_siguiente_room = Rm_MenuInit;
+                    room_goto(Rm_Historia);
+                } else {
+                    room_goto(Rm_MenuInit);
+                }
             } else {
                 room_goto(Rm_MenuInit);
             }

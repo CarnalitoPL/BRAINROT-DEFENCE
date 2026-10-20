@@ -13,6 +13,7 @@ duracion_reinicio = game_get_speed(gamespeed_fps) * 3; // 3 segundos
 
 waves = [];
 siguiente_nivel = noone; // Room a la que lleva "Continuar" al ganar (noone = ultimo nivel)
+tiempo_victoria = -1;
 
 if (room == Rm_Ciudad) {
     global.dinero = 60;

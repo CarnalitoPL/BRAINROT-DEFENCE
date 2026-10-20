@@ -81,6 +81,16 @@ if (global.estado_juego == "jugando" && estado_oleada == "aviso") {
     draw_set_valign(fa_top);
 }
 
+if (global.estado_juego == "victoria") {
+    draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
+    draw_set_color(c_yellow);
+    draw_text_transformed(1366/2, 768/2, "¡VICTORIA!", 4, 4, 0);
+    draw_set_color(c_white);
+    draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
+}
+
 if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
@@ -183,8 +193,8 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
     }
 }
 
-// Pantallas de Victoria, Derrota y Pausa
-if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || global.estado_juego == "pausado") {
+// Pantallas de Derrota y Pausa
+if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
     if (global.estado_juego == "pausado" && sprite_exists(pause_sprite)) {
         draw_sprite_stretched(pause_sprite, 0, 0, 0, display_get_gui_width(), display_get_gui_height());
     }
@@ -201,9 +211,6 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
     if (global.estado_juego == "game_over") {
         draw_text_transformed(1366/2, 150, "GAME OVER", 3, 3, 0);
         draw_text(1366/2, 220, "Bombardilo Cocodrilo gano...");
-    } else if (global.estado_juego == "victoria") {
-        draw_text_transformed(1366/2, 150, "¡NIVEL COMPLETADO!", 3, 3, 0);
-        draw_text(1366/2, 220, "Puntuacion (Vida restante): " + string(global.vida));
     } else if (global.estado_juego == "pausado") {
         if (!en_ajustes) {
             draw_text_transformed(1366/2, 150, "PAUSA", 3, 3, 0);
@@ -263,19 +270,15 @@ if (global.estado_juego == "game_over" || global.estado_juego == "victoria" || g
         }
     }
 
-    // Botones de Victoria / Game Over
-    if (global.estado_juego == "game_over" || global.estado_juego == "victoria") {
+    // Botones de Game Over
+    if (global.estado_juego == "game_over") {
         draw_set_color(c_maroon);
         draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
         draw_set_color(c_teal);
         draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
         draw_set_color(c_white);
         draw_text(1366/2 - 80, 315, "Reiniciar");
-        if (global.estado_juego == "victoria" && siguiente_nivel != noone) {
-            draw_text(1366/2 + 80, 315, "Continuar");
-        } else {
-            draw_text(1366/2 + 80, 315, "Menu Principal");
-        }
+        draw_text(1366/2 + 80, 315, "Menu Principal");
     }
 
     draw_set_halign(fa_left);

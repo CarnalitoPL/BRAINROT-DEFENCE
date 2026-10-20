@@ -7,8 +7,13 @@ if (mouse_check_button_pressed(mb_left)) {
             // Clic en Continuar
             if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 380 && my < 460) {
                 var rm = asset_get_index(nivel_guardado);
-                if (rm != -1) room_goto(rm);
-                else room_goto(Rm_Ciudad);
+                if (rm != -1) {
+                    room_goto(rm);
+                } else {
+                    global.historia_sprite = Spr_ComienzoDeHistoria;
+                    global.historia_siguiente_room = Rm_Ciudad;
+                    room_goto(Rm_Historia);
+                }
             }
             // Clic en Nueva Partida
             else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 480 && my < 560) {
@@ -16,7 +21,9 @@ if (mouse_check_button_pressed(mb_left)) {
                 ini_open("save.ini");
                 ini_section_delete("Progreso");
                 ini_close();
-                room_goto(Rm_Ciudad);
+                global.historia_sprite = Spr_ComienzoDeHistoria;
+                global.historia_siguiente_room = Rm_Ciudad;
+                room_goto(Rm_Historia);
             }
         } else {
             // Clic en Jugar
@@ -24,7 +31,9 @@ if (mouse_check_button_pressed(mb_left)) {
                 ini_open("save.ini");
                 ini_section_delete("Progreso");
                 ini_close();
-                room_goto(Rm_Ciudad);
+                global.historia_sprite = Spr_ComienzoDeHistoria;
+                global.historia_siguiente_room = Rm_Ciudad;
+                room_goto(Rm_Historia);
             }
         }
         
