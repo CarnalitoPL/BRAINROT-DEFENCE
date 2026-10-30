@@ -3,6 +3,7 @@ nivel_guardado = ini_read_string("Progreso", "Nivel", "");
 global.vol_musica = ini_read_real("Config", "Musica", 1.0);
 global.vol_sfx = ini_read_real("Config", "SFX", 1.0);
 global.fullscreen = ini_read_real("Config", "Fullscreen", 0);
+global.mostrar_vida_enemigos = ini_read_real("Config", "VidaEnemigos", 1);
 ini_close();
 
 window_set_fullscreen(global.fullscreen);

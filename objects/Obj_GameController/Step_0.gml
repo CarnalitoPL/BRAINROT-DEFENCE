@@ -120,34 +120,39 @@ if (mouse_check_button_pressed(mb_left)) {
         } else {
             // Logica Ajustes
             // Musica [-]
-            if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 185 && my < 235) {
+            if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 150 && my < 195) {
                 global.vol_musica = clamp(global.vol_musica - 0.1, 0, 1);
                 if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
             }
             // Musica [+]
-            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 185 && my < 235) {
+            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 150 && my < 195) {
                 global.vol_musica = clamp(global.vol_musica + 0.1, 0, 1);
                 if (audio_is_playing(musica_actual)) audio_sound_gain(musica_actual, global.vol_musica, 0);
             }
             // SFX [-]
-            else if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 265 && my < 315) {
+            else if (mx > 1366/2 - 150 && mx < 1366/2 - 100 && my > 220 && my < 265) {
                 global.vol_sfx = clamp(global.vol_sfx - 0.1, 0, 1);
             }
             // SFX [+]
-            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 265 && my < 315) {
+            else if (mx > 1366/2 + 100 && mx < 1366/2 + 150 && my > 220 && my < 265) {
                 global.vol_sfx = clamp(global.vol_sfx + 0.1, 0, 1);
             }
             // Pantalla Completa
-            else if (mx > 1366/2 - 200 && mx < 1366/2 + 200 && my > 350 && my < 400) {
+            else if (mx > 1366/2 - 200 && mx < 1366/2 + 200 && my > 290 && my < 340) {
                 global.fullscreen = !global.fullscreen;
                 window_set_fullscreen(global.fullscreen);
             }
+            // Barra de Vida en Peces
+            else if (mx > 1366/2 - 200 && mx < 1366/2 + 200 && my > 360 && my < 410) {
+                global.mostrar_vida_enemigos = !global.mostrar_vida_enemigos;
+            }
             // Volver
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 450 && my < 500) {
+            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 460 && my < 510) {
                 ini_open("save.ini");
                 ini_write_real("Config", "Musica", global.vol_musica);
                 ini_write_real("Config", "SFX", global.vol_sfx);
                 ini_write_real("Config", "Fullscreen", global.fullscreen);
+                ini_write_real("Config", "VidaEnemigos", global.mostrar_vida_enemigos);
                 ini_close();
                 en_ajustes = false;
             }
@@ -261,21 +266,24 @@ if (mouse_check_button_pressed(mb_left) && !clic_consumido && instance_exists(to
     var _tx = torre_seleccionada.x - camera_get_view_x(view_camera[0]);
     var _ty = torre_seleccionada.y - camera_get_view_y(view_camera[0]);
 
-    var _box_w = 140;
-    var _box_h = 130;
-    var _bx1 = _tx - (_box_w / 2);
-    var _by1 = _ty - 40 - _box_h;
-    var _bx2 = _tx + (_box_w / 2);
-    var _by2 = _ty - 40;
+    var _box_w = 240;
+    var _box_h = 210;
+    var _bx1 = clamp(_tx - (_box_w / 2), 10, 1366 - _box_w - 10);
+    var _bx2 = _bx1 + _box_w;
+    var _by1 = _ty - 35 - _box_h;
+    if (_by1 < 60) {
+        _by1 = min(_ty + 40, 768 - _box_h - 10);
+    }
+    var _by2 = _by1 + _box_h;
 
-    var _btn_upg_y1 = _by1 + 35;
-    var _btn_upg_y2 = _by1 + 70;
+    var _btn_upg_y1 = _by1 + 118;
+    var _btn_upg_y2 = _by1 + 156;
     
-    var _btn_sell_y1 = _by1 + 80;
-    var _btn_sell_y2 = _by1 + 115;
+    var _btn_sell_y1 = _by1 + 164;
+    var _btn_sell_y2 = _by1 + 198;
     
     // Si clicamos en el boton de mejorar
-    if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_upg_y1 && my <= _btn_upg_y2) {
+    if (mx >= _bx1 + 12 && mx <= _bx2 - 12 && my >= _btn_upg_y1 && my <= _btn_upg_y2) {
         var _costo_mejora = costo_mejora(torre_seleccionada);
         if (torre_seleccionada.nivel < nivel_max_torre && global.dinero >= _costo_mejora) {
             global.dinero -= _costo_mejora;
@@ -291,7 +299,7 @@ if (mouse_check_button_pressed(mb_left) && !clic_consumido && instance_exists(to
         }
     } 
     // Si clicamos en el boton de vender
-    else if (mx >= _bx1 + 10 && mx <= _bx2 - 10 && my >= _btn_sell_y1 && my <= _btn_sell_y2) {
+    else if (mx >= _bx1 + 12 && mx <= _bx2 - 12 && my >= _btn_sell_y1 && my <= _btn_sell_y2) {
         var venta = round(torre_seleccionada.inversion_total * porcentaje_venta);
         global.dinero += venta;
         instance_destroy(torre_seleccionada);

@@ -1,5 +1,6 @@
 event_inherited();
 hp = 30;
+hp_max = hp;
 speed_base = 1.5;
 current_speed = speed_base; // El padre la fijo con su propio speed_base
 valor = 10;

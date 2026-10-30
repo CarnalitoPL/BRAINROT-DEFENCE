@@ -71,6 +71,11 @@ tiempo_aviso = 180;
 if (!variable_global_exists("vol_musica")) global.vol_musica = 1.0;
 if (!variable_global_exists("vol_sfx")) global.vol_sfx = 1.0;
 if (!variable_global_exists("fullscreen")) global.fullscreen = false;
+if (!variable_global_exists("mostrar_vida_enemigos")) {
+    ini_open("save.ini");
+    global.mostrar_vida_enemigos = ini_read_real("Config", "VidaEnemigos", 1);
+    ini_close();
+}
 
 audio_stop_all();
 musica_actual = audio_play_sound(Snd_MusicaDeFondo, 1, true, global.vol_musica);

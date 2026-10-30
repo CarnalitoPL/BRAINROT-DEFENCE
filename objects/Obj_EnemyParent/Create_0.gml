@@ -1,4 +1,5 @@
 hp = 10;
+hp_max = hp;
 speed_base = 2;
 valor = 5;
 camuflado = false;

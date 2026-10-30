@@ -151,41 +151,130 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
         var _tx = torre_seleccionada.x - camera_get_view_x(view_camera[0]);
         var _ty = torre_seleccionada.y - camera_get_view_y(view_camera[0]);
 
-        var _box_w = 140;
-        var _box_h = 130;
-        var _bx1 = _tx - (_box_w / 2);
-        var _by1 = _ty - 40 - _box_h;
-        var _bx2 = _tx + (_box_w / 2);
-        var _by2 = _ty - 40;
+        var _box_w = 240;
+        var _box_h = 210;
+        var _bx1 = clamp(_tx - (_box_w / 2), 10, 1366 - _box_w - 10);
+        var _bx2 = _bx1 + _box_w;
+        var _by1 = _ty - 35 - _box_h;
+        if (_by1 < 60) {
+            _by1 = min(_ty + 40, 768 - _box_h - 10);
+        }
+        var _by2 = _by1 + _box_h;
 
+        // Fondo y borde
         draw_set_color(c_black);
-        draw_set_alpha(0.8);
+        draw_set_alpha(0.85);
         draw_rectangle(_bx1, _by1, _bx2, _by2, false);
         draw_set_alpha(1.0);
-
         draw_set_color(c_white);
+        draw_rectangle(_bx1, _by1, _bx2, _by2, true);
+
+        var _t_mid = _bx1 + (_box_w / 2);
+
+        // Nombre de la torre
+        var _nom = "Torre";
+        if (torre_seleccionada.object_index == Obj_TorreTripleT) _nom = "TripleT";
+        else if (torre_seleccionada.object_index == Obj_TorreCapuchino) _nom = "Capuchino";
+        else if (torre_seleccionada.object_index == Obj_TorreChimpancini) _nom = "Mono";
+        else if (torre_seleccionada.object_index == Obj_TorreDinero) _nom = "T. Dinero";
+
+        var _es_max = torre_seleccionada.nivel >= nivel_max_torre;
+        var _next_lvl = torre_seleccionada.nivel + 1;
+
+        // Titulo: Nombre y Nivel
         draw_set_halign(fa_center);
-        draw_text(_tx, _by1 + 10, "Nivel: " + string(torre_seleccionada.nivel));
+        draw_set_valign(fa_top);
+        draw_set_color(c_aqua);
+        draw_text(_t_mid, _by1 + 10, _nom + " (Nv. " + string(torre_seleccionada.nivel) + "/5)");
+
+        // Que mejora en el siguiente nivel
+        if (!_es_max) {
+            draw_set_color(c_yellow);
+            draw_text(_t_mid, _by1 + 32, "-> Siguiente Nivel (" + string(_next_lvl) + "):");
+
+            draw_set_halign(fa_left);
+            var _info_x = _bx1 + 16;
+            draw_set_color(c_white);
+
+            if (torre_seleccionada.object_index == Obj_TorreDinero) {
+                var _mon_act = 15 + (torre_seleccionada.nivel - 1) * 10;
+                var _mon_sig = 15 + torre_seleccionada.nivel * 10;
+                draw_text(_info_x, _by1 + 52, "+ Moneda: $" + string(_mon_act) + " -> $" + string(_mon_sig));
+                draw_text(_info_x, _by1 + 72, "+ Generacion: +10% rapido");
+                draw_set_color(c_lime);
+                draw_text(_info_x, _by1 + 92, "(+$10 por cada moneda)");
+            } else if (torre_seleccionada.object_index == Obj_TorreChimpancini) {
+                draw_text(_info_x, _by1 + 52, "+ Dano: " + string(torre_seleccionada.danio) + " -> " + string(torre_seleccionada.danio + 2));
+                draw_text(_info_x, _by1 + 72, "+ Usos: " + string(1 + torre_seleccionada.nivel) + " -> " + string(2 + torre_seleccionada.nivel) + " resbalones");
+                if (_next_lvl == 3) {
+                    draw_set_color(c_yellow);
+                    draw_text(_info_x, _by1 + 92, "! Desbloquea: Ve Invisibles");
+                } else if (_next_lvl == 5) {
+                    draw_set_color(c_yellow);
+                    draw_text(_info_x, _by1 + 92, "! Desbloquea: Perfora Piedra");
+                } else {
+                    draw_set_color(c_lime);
+                    draw_text(_info_x, _by1 + 92, "+ Cadencia: +10% rapido");
+                }
+            } else if (torre_seleccionada.object_index == Obj_TorreCapuchino) {
+                draw_text(_info_x, _by1 + 52, "+ Dano: " + string(torre_seleccionada.danio) + " -> " + string(torre_seleccionada.danio + 2));
+                draw_text(_info_x, _by1 + 72, "+ Cadencia: +10% rapido");
+                if (_next_lvl == 5) {
+                    draw_set_color(c_yellow);
+                    draw_text(_info_x, _by1 + 92, "! Desbloquea: Perfora Piedra");
+                } else {
+                    draw_set_color(c_lime);
+                    draw_text(_info_x, _by1 + 92, "* Ve invisibles (Activo)");
+                }
+            } else {
+                // TripleT y demas
+                draw_text(_info_x, _by1 + 52, "+ Dano: " + string(torre_seleccionada.danio) + " -> " + string(torre_seleccionada.danio + 2));
+                draw_text(_info_x, _by1 + 72, "+ Cadencia: +10% rapido");
+                if (_next_lvl == 3) {
+                    draw_set_color(c_yellow);
+                    draw_text(_info_x, _by1 + 92, "! Desbloquea: Ve Invisibles");
+                } else if (_next_lvl == 5) {
+                    draw_set_color(c_yellow);
+                    draw_text(_info_x, _by1 + 92, "! Desbloquea: Perfora Piedra");
+                } else if (torre_seleccionada.nivel >= 3) {
+                    draw_set_color(c_lime);
+                    draw_text(_info_x, _by1 + 92, "* Ve invisibles (Activo)");
+                } else {
+                    draw_set_color(c_gray);
+                    draw_text(_info_x, _by1 + 92, "(Nv 3 desbloquea Invisibles)");
+                }
+            }
+        } else {
+            draw_set_color(c_yellow);
+            draw_text(_t_mid, _by1 + 48, "Nivel Maximo");
+            draw_set_color(c_lime);
+            draw_text(_t_mid, _by1 + 72, "(Poder al maximo)");
+        }
+
+        draw_set_halign(fa_center);
+        draw_set_valign(fa_middle);
 
         // Boton Mejorar
-        var _btn_upg_y1 = _by1 + 35;
-        var _btn_upg_y2 = _by1 + 70;
-        var _es_max = torre_seleccionada.nivel >= nivel_max_torre;
+        var _btn_upg_y1 = _by1 + 118;
+        var _btn_upg_y2 = _by1 + 156;
         var _costo_mejora = costo_mejora(torre_seleccionada);
         draw_set_color((_es_max || global.dinero < _costo_mejora) ? c_dkgray : c_green);
-        draw_rectangle(_bx1 + 10, _btn_upg_y1, _bx2 - 10, _btn_upg_y2, false);
+        draw_rectangle(_bx1 + 12, _btn_upg_y1, _bx2 - 12, _btn_upg_y2, false);
         draw_set_color(c_black);
-        draw_set_valign(fa_middle);
-        draw_text(_tx, _btn_upg_y1 + 17, _es_max ? "Nivel MAX" : "Mejorar ($" + string(_costo_mejora) + ")");
+        draw_rectangle(_bx1 + 12, _btn_upg_y1, _bx2 - 12, _btn_upg_y2, true);
+        draw_set_color(_es_max ? c_silver : c_white);
+        draw_text(_t_mid, _btn_upg_y1 + 19, _es_max ? "Nivel MAX" : "Mejorar ($" + string(_costo_mejora) + ")");
 
         // Boton Vender
-        var _btn_sell_y1 = _by1 + 80;
-        var _btn_sell_y2 = _by1 + 115;
+        var _btn_sell_y1 = _by1 + 164;
+        var _btn_sell_y2 = _by1 + 198;
         draw_set_color(c_maroon);
-        draw_rectangle(_bx1 + 10, _btn_sell_y1, _bx2 - 10, _btn_sell_y2, false);
+        draw_rectangle(_bx1 + 12, _btn_sell_y1, _bx2 - 12, _btn_sell_y2, false);
+        draw_set_color(c_black);
+        draw_rectangle(_bx1 + 12, _btn_sell_y1, _bx2 - 12, _btn_sell_y2, true);
         draw_set_color(c_white);
         var venta = round(torre_seleccionada.inversion_total * porcentaje_venta);
-        draw_text(_tx, _btn_sell_y1 + 17, "Vender (+$" + string(venta) + ")");
+        draw_text(_t_mid, _btn_sell_y1 + 17, "Vender (+$" + string(venta) + ")");
 
         draw_set_halign(fa_left);
         draw_set_valign(fa_top);
@@ -230,43 +319,50 @@ if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
             // Menu de Ajustes
             draw_set_color(c_black);
             draw_set_alpha(0.8);
-            draw_rectangle(1366/2 - 300, 100, 1366/2 + 300, 600, false);
+            draw_rectangle(1366/2 - 300, 80, 1366/2 + 300, 580, false);
             draw_set_alpha(1.0);
             
             draw_set_color(c_white);
-            draw_text_transformed(1366/2, 130, "AJUSTES", 2, 2, 0);
+            draw_text_transformed(1366/2, 110, "AJUSTES", 2, 2, 0);
             
             // Musica
-            draw_text(1366/2, 200, "Musica: " + string(round(global.vol_musica * 100)) + "%");
+            draw_text(1366/2, 165, "Musica: " + string(round(global.vol_musica * 100)) + "%");
             draw_set_color(c_gray);
-            draw_rectangle(1366/2 - 150, 185, 1366/2 - 100, 235, false); // [-]
-            draw_rectangle(1366/2 + 100, 185, 1366/2 + 150, 235, false); // [+]
+            draw_rectangle(1366/2 - 150, 150, 1366/2 - 100, 195, false); // [-]
+            draw_rectangle(1366/2 + 100, 150, 1366/2 + 150, 195, false); // [+]
             draw_set_color(c_black);
-            draw_text(1366/2 - 125, 195, "-");
-            draw_text(1366/2 + 125, 195, "+");
+            draw_text(1366/2 - 125, 160, "-");
+            draw_text(1366/2 + 125, 160, "+");
             
             // SFX
             draw_set_color(c_white);
-            draw_text(1366/2, 280, "SFX: " + string(round(global.vol_sfx * 100)) + "%");
+            draw_text(1366/2, 235, "SFX: " + string(round(global.vol_sfx * 100)) + "%");
             draw_set_color(c_gray);
-            draw_rectangle(1366/2 - 150, 265, 1366/2 - 100, 315, false); // [-]
-            draw_rectangle(1366/2 + 100, 265, 1366/2 + 150, 315, false); // [+]
+            draw_rectangle(1366/2 - 150, 220, 1366/2 - 100, 265, false); // [-]
+            draw_rectangle(1366/2 + 100, 220, 1366/2 + 150, 265, false); // [+]
             draw_set_color(c_black);
-            draw_text(1366/2 - 125, 275, "-");
-            draw_text(1366/2 + 125, 275, "+");
+            draw_text(1366/2 - 125, 230, "-");
+            draw_text(1366/2 + 125, 230, "+");
             
             // Pantalla Completa
             var txt_fs = global.fullscreen ? "Pantalla Completa: SI" : "Pantalla Completa: NO";
             draw_set_color(c_teal);
-            draw_rectangle(1366/2 - 200, 350, 1366/2 + 200, 400, false);
+            draw_rectangle(1366/2 - 200, 290, 1366/2 + 200, 340, false);
             draw_set_color(c_black);
-            draw_text(1366/2, 360, txt_fs);
+            draw_text(1366/2, 302, txt_fs);
+            
+            // Barra de Vida en Peces
+            var txt_vida = global.mostrar_vida_enemigos ? "Vida en Peces: SI" : "Vida en Peces: NO";
+            draw_set_color(c_teal);
+            draw_rectangle(1366/2 - 200, 360, 1366/2 + 200, 410, false);
+            draw_set_color(c_black);
+            draw_text(1366/2, 372, txt_vida);
             
             // Boton Volver
             draw_set_color(c_maroon);
-            draw_rectangle(1366/2 - 150, 450, 1366/2 + 150, 500, false);
+            draw_rectangle(1366/2 - 150, 460, 1366/2 + 150, 510, false);
             draw_set_color(c_white);
-            draw_text(1366/2, 460, "VOLVER");
+            draw_text(1366/2, 472, "VOLVER");
         }
     }
 
