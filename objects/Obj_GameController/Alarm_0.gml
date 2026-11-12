@@ -9,7 +9,15 @@ if (current_wave_index >= array_length(waves)) {
 var current_wave = waves[current_wave_index];
 var current_instruction = current_wave[current_subwave_index];
 
-instance_create_layer(0, 0, "Instances", current_instruction.obj);
+var inst = instance_create_layer(0, 0, "Instances", current_instruction.obj);
+
+// Escalado de dificultad y vida en Modo Infinito (+12% de vida por oleada)
+if (global.modo_infinito && global.oleada > 1) {
+    var mult_hp = 1 + (global.oleada - 1) * 0.12;
+    inst.hp = round(inst.hp * mult_hp);
+    inst.hp_max = inst.hp;
+}
+
 enemies_spawned_in_subwave++;
 
 if (enemies_spawned_in_subwave >= current_instruction.count) {

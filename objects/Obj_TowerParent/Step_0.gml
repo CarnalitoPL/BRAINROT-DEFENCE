@@ -23,7 +23,7 @@ if (target != noone) {
     
     if (cd_actual <= 0) {
         var d = danio;
-        if (target.resistente && !perfora_piedra) d = 1;
+        if (target.resistente && !perfora_piedra) d = max(1, floor(d / 2));
         target.hp -= d;
         
         var bate = instance_create_layer(x + lengthdir_x(20, angulo), y + lengthdir_y(20, angulo), "Instances", Obj_EfectoBate);

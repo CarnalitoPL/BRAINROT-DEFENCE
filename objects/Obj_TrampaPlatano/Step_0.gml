@@ -13,7 +13,7 @@ with (Obj_EnemyParent) {
             array_push(other.hit_array, id);
             
             var d = other.danio;
-            if (resistente && !other.perfora_piedra) d = 1;
+            if (resistente && !other.perfora_piedra) d = max(1, floor(d / 2));
             hp -= d;
             
             current_speed -= 0.5;

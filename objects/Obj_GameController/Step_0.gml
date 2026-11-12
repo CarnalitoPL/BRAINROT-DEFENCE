@@ -17,11 +17,20 @@ if (keyboard_check(ord("R"))) {
 if (global.estado_juego == "jugando") {
     if (global.vida <= 0) {
         global.estado_juego = "game_over";
+        if (global.modo_infinito) {
+            if (global.oleada > record_infinita) {
+                record_infinita = global.oleada;
+                ini_open("save.ini");
+                ini_write_real("Record", "OleadaInfinita", record_infinita);
+                ini_close();
+            }
+        }
         audio_stop_sound(musica_actual);
         musica_actual = audio_play_sound(Snd_MusicaDerrota, 1, false, global.vol_musica);
-    } else if (current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
+    } else if (!global.modo_infinito && current_wave_index >= array_length(waves) && !instance_exists(Obj_EnemyParent)) {
         global.estado_juego = "victoria";
-        tiempo_victoria = 35;
+        tiempo_victoria = -1;
+        game_set_speed(60, gamespeed_fps);
         audio_stop_sound(musica_actual);
         musica_actual = audio_play_sound(Snd_MusicaVictoria, 1, false, global.vol_musica);
 
@@ -42,7 +51,20 @@ if (global.estado_juego == "jugando") {
             if (!instance_exists(Obj_EnemyParent)) {
                 current_wave_index++;
                 global.oleada++;
-                if (current_wave_index < array_length(waves)) {
+                if (global.modo_infinito) {
+                    if (global.oleada > record_infinita) {
+                        record_infinita = global.oleada;
+                        ini_open("save.ini");
+                        ini_write_real("Record", "OleadaInfinita", record_infinita);
+                        ini_close();
+                    }
+                    waves[current_wave_index] = generar_oleada_infinita(global.oleada);
+                    current_subwave_index = 0;
+                    enemies_spawned_in_subwave = 0;
+                    global.dinero += bonus_oleada_base + min(current_wave_index, 10) * bonus_oleada_extra;
+                    estado_oleada = "aviso";
+                    tiempo_aviso = 120;
+                } else if (current_wave_index < array_length(waves)) {
                     global.dinero += bonus_oleada_base + bonus_oleada_extra * current_wave_index;
                     estado_oleada = "aviso";
                     tiempo_aviso = 180;
@@ -52,43 +74,37 @@ if (global.estado_juego == "jugando") {
     }
 }
 
-// Cuenta regresiva para mostrar la historia al terminar el nivel
-if (global.estado_juego == "victoria" && tiempo_victoria > 0) {
-    tiempo_victoria--;
-    if (tiempo_victoria <= 0) {
-        if (room == Rm_Ciudad) {
-            global.historia_sprite = Spr_HistoriaAlTerminarNivel1;
-            global.historia_siguiente_room = Rm_Bosque;
-            room_goto(Rm_Historia);
-        } else if (room == Rm_Bosque) {
-            global.historia_sprite = Spr_HistoriaAlTerminarNivel2;
-            global.historia_siguiente_room = Rm_Mar;
-            room_goto(Rm_Historia);
-        } else if (room == Rm_Mar) {
-            global.historia_sprite = Spr_HistoriaAlTerminarNivel3;
-            global.historia_siguiente_room = Rm_MenuInit;
-            room_goto(Rm_Historia);
-        } else {
-            room_goto(Rm_MenuInit);
-        }
-        exit;
-    }
-}
-
-// Botones persistentes (Pausa y Menus de finalizacion)
+// Botones persistentes (Velocidad, Pausa y Menus de finalizacion)
 if (mouse_check_button_pressed(mb_left)) {
     var mx = device_mouse_x_to_gui(0);
     var my = device_mouse_y_to_gui(0);
+    
+    // Boton de Velocidad (x=1140 a 1240, y=10 a 50)
+    if (global.estado_juego == "jugando" && mx > 1140 && mx < 1240 && my > 10 && my < 50) {
+        if (global.velocidad_juego == 1) {
+            global.velocidad_juego = 2;
+            game_set_speed(120, gamespeed_fps);
+        } else if (global.velocidad_juego == 2) {
+            global.velocidad_juego = 3;
+            game_set_speed(180, gamespeed_fps);
+        } else {
+            global.velocidad_juego = 1;
+            game_set_speed(60, gamespeed_fps);
+        }
+        audio_play_sound(Snd_PresionarBtn, 2, false, global.vol_sfx);
+    }
     
     // Boton de Pausa (Esquina superior derecha: x=1250 a 1350, y=10 a 50)
     if (mx > 1250 && mx < 1350 && my > 10 && my < 50) {
         if (global.estado_juego == "jugando") {
             global.estado_juego = "pausado";
+            game_set_speed(60, gamespeed_fps);
             if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
             pause_sprite = sprite_create_from_surface(application_surface, 0, 0, surface_get_width(application_surface), surface_get_height(application_surface), false, false, 0, 0);
             instance_deactivate_all(true);
         } else if (global.estado_juego == "pausado") {
             global.estado_juego = "jugando";
+            game_set_speed(60 * global.velocidad_juego, gamespeed_fps);
             en_ajustes = false; // Si se reanuda desde Ajustes, la proxima pausa abre el menu normal
             instance_activate_all();
             if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
@@ -101,6 +117,7 @@ if (mouse_check_button_pressed(mb_left)) {
             // "Reanudar": x=1366/2 - 150 a 1366/2 - 10, y=300 a 350
             if (mx > 1366/2 - 150 && mx < 1366/2 - 10 && my > 300 && my < 350) {
                 global.estado_juego = "jugando";
+                game_set_speed(60 * global.velocidad_juego, gamespeed_fps);
                 instance_activate_all();
                 if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
             }
@@ -109,6 +126,7 @@ if (mouse_check_button_pressed(mb_left)) {
                 ini_open("save.ini");
                 ini_write_string("Progreso", "Nivel", room_get_name(room));
                 ini_close();
+                game_set_speed(60, gamespeed_fps);
                 instance_activate_all();
                 if (sprite_exists(pause_sprite)) sprite_delete(pause_sprite);
                 room_goto(Rm_MenuInit);
@@ -162,13 +180,26 @@ if (mouse_check_button_pressed(mb_left)) {
     
     // Si estamos en Game Over o Victoria, detectar botones
     if (global.estado_juego == "game_over" || global.estado_juego == "victoria") {
-        // Boton Reiniciar
-        if (mx > 1366/2 - 150 && mx < 1366/2 - 10 && my > 300 && my < 350) {
-            room_restart();
-        }
-        // Boton Continuar / Menu
-        if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
-            if (global.estado_juego == "victoria") {
+        if (global.estado_juego == "game_over") {
+            // Boton Reiniciar
+            if (mx > 1366/2 - 150 && mx < 1366/2 - 10 && my > 300 && my < 350) {
+                game_set_speed(60, gamespeed_fps);
+                room_restart();
+            }
+            // Boton Menu Principal
+            if (mx > 1366/2 + 10 && mx < 1366/2 + 150 && my > 300 && my < 350) {
+                game_set_speed(60, gamespeed_fps);
+                room_goto(Rm_MenuInit);
+            }
+        } else if (global.estado_juego == "victoria") {
+            // Boton Menu Principal
+            if (mx > 1366/2 - 170 && mx < 1366/2 - 10 && my > 320 && my < 370) {
+                game_set_speed(60, gamespeed_fps);
+                room_goto(Rm_MenuInit);
+            }
+            // Boton Siguiente Nivel
+            if (mx > 1366/2 + 10 && mx < 1366/2 + 170 && my > 320 && my < 370) {
+                game_set_speed(60, gamespeed_fps);
                 if (room == Rm_Ciudad) {
                     global.historia_sprite = Spr_HistoriaAlTerminarNivel1;
                     global.historia_siguiente_room = Rm_Bosque;
@@ -184,8 +215,6 @@ if (mouse_check_button_pressed(mb_left)) {
                 } else {
                     room_goto(Rm_MenuInit);
                 }
-            } else {
-                room_goto(Rm_MenuInit);
             }
         }
         exit;
@@ -207,17 +236,27 @@ if (estado_colocacion > 0) {
 
     motivo_invalido = motivo_colocacion_invalida(mouse_x, mouse_y, mx_g, my_g, costo);
 
+    // Detectar si el usuario esta arrastrando (movio mas de 25px con el dedo/mouse presionado)
+    if (mouse_check_button(mb_left) && arrastrando_torre) {
+        if (point_distance(arrastre_inicio_x, arrastre_inicio_y, mx_g, my_g) > 25) {
+            arrastre_ha_movido = true;
+        }
+    }
+
     if (mouse_check_button_pressed(mb_right) || keyboard_check_pressed(ord("X"))) {
         estado_colocacion = 0;
+        arrastrando_torre = false;
     } else if (mouse_check_button_pressed(mb_left)) {
         clic_consumido = true;
         // Clic en el boton "Cancelar" (Esquina inferior derecha)
         if (mx_g > 1366 - 150 && mx_g < 1366 - 10 && my_g > 700 && my_g < 750) {
             estado_colocacion = 0;
+            arrastrando_torre = false;
         } 
         // Clic en el boton "Comprar" para cancelar/alternar
         else if (mx_g > 10 && mx_g < 110 && my_g > 650 && my_g < 750) {
             estado_colocacion = 0;
+            arrastrando_torre = false;
             menu_tienda_abierto = !menu_tienda_abierto;
         } 
         // Colocar la torre (si la posicion no es valida se sigue en modo colocacion)
@@ -228,7 +267,31 @@ if (estado_colocacion > 0) {
             global.dinero -= costo;
             audio_play_sound(Snd_PonerTorre, 2, false, global.vol_sfx);
             estado_colocacion = 0; // Termina el modo de colocacion
+            arrastrando_torre = false;
         }
+    } else if (mouse_check_button_released(mb_left) && arrastrando_torre) {
+        // En celular o PC arrastrando: se confirma la compra al soltar el dedo
+        if (arrastre_ha_movido) {
+            clic_consumido = true;
+            // Soltar sobre el boton Cancelar
+            if (mx_g > 1366 - 150 && mx_g < 1366 - 10 && my_g > 700 && my_g < 750) {
+                estado_colocacion = 0;
+            }
+            // Soltar sobre el boton Comprar
+            else if (mx_g > 10 && mx_g < 110 && my_g > 650 && my_g < 750) {
+                estado_colocacion = 0;
+            }
+            // Soltar en posicion valida en el campo de batalla -> Colocar y comprar
+            else if (motivo_invalido == "") {
+                var inst = instance_create_layer(mouse_x, mouse_y, "Instances", torre_obj);
+                inst.inversion_total = costo;
+                inst.costo_base = costo;
+                global.dinero -= costo;
+                audio_play_sound(Snd_PonerTorre, 2, false, global.vol_sfx);
+                estado_colocacion = 0;
+            }
+        }
+        arrastrando_torre = false;
     }
 } else {
     // Detectar clics en la interfaz
@@ -252,6 +315,10 @@ if (estado_colocacion > 0) {
                 menu_tienda_abierto = false; // Cierra menu al seleccionar
                 torre_seleccionada = noone;  // Cierra el menu de mejora mientras se coloca
                 clic_consumido = true;
+                arrastrando_torre = true;
+                arrastre_ha_movido = false;
+                arrastre_inicio_x = mx;
+                arrastre_inicio_y = my;
                 audio_play_sound(Snd_PresionarBtn, 2, false, global.vol_sfx);
             }
         }
@@ -290,7 +357,9 @@ if (mouse_check_button_pressed(mb_left) && !clic_consumido && instance_exists(to
             torre_seleccionada.inversion_total += _costo_mejora;
             torre_seleccionada.nivel++;
             torre_seleccionada.danio += 2;
-            torre_seleccionada.cooldown *= 0.9;
+            // Increase range proportionally (+10 per level, max 300)
+            torre_seleccionada.rango = clamp(torre_seleccionada.rango + 10, 0, 300);
+
             
             if (torre_seleccionada.nivel >= 3) torre_seleccionada.puede_ver_camuflados = true;
             if (torre_seleccionada.nivel >= 5) torre_seleccionada.perfora_piedra = true;

@@ -1,3 +1,4 @@
+gpu_set_texfilter(false);
 draw_sprite_stretched(Spr_FondoMenu, 0, 0, 0, 1366, 768);
 
 draw_set_font(Fnt_juego); // Applying global font here just in case
@@ -6,48 +7,66 @@ draw_set_halign(fa_center);
 draw_text_transformed(1366/2, 100, "BRAINROT DEFENCE", 3, 3, 0);
 
 if (!en_ajustes) {
+    var txt_infinito = (global.record_infinito > 0) ? "MODO INFINITO (" + string(global.record_infinito) + ")" : "MODO INFINITO";
+    
     if (nivel_guardado != "") {
         // Boton Continuar
         draw_set_color(c_aqua);
-        draw_rectangle(1366/2 - 150, 330, 1366/2 + 150, 395, false);
+        draw_rectangle(1366/2 - 160, 270, 1366/2 + 160, 325, false);
         draw_set_color(c_black);
-        draw_text_transformed(1366/2, 350, "CONTINUAR", 1.8, 1.8, 0);
+        draw_text_transformed(1366/2, 288, "CONTINUAR", 1.8, 1.8, 0);
         
         // Boton Nueva Partida
         draw_set_color(c_green);
-        draw_rectangle(1366/2 - 150, 410, 1366/2 + 150, 475, false);
+        draw_rectangle(1366/2 - 160, 340, 1366/2 + 160, 395, false);
         draw_set_color(c_black);
-        draw_text_transformed(1366/2, 430, "NUEVA PARTIDA", 1.8, 1.8, 0);
+        draw_text_transformed(1366/2, 358, "NUEVA PARTIDA", 1.8, 1.8, 0);
+        
+        // Boton Modo Infinito
+        draw_set_color(make_color_rgb(130, 40, 175));
+        draw_rectangle(1366/2 - 160, 410, 1366/2 + 160, 465, false);
+        draw_set_color(c_yellow);
+        draw_rectangle(1366/2 - 160, 410, 1366/2 + 160, 465, true);
+        draw_set_color(c_white);
+        draw_text_transformed(1366/2, 428, txt_infinito, 1.5, 1.5, 0);
         
         // Boton Ajustes
         draw_set_color(c_gray);
-        draw_rectangle(1366/2 - 150, 490, 1366/2 + 150, 555, false);
+        draw_rectangle(1366/2 - 160, 480, 1366/2 + 160, 535, false);
         draw_set_color(c_black);
-        draw_text_transformed(1366/2, 510, "AJUSTES", 1.8, 1.8, 0);
+        draw_text_transformed(1366/2, 498, "AJUSTES", 1.8, 1.8, 0);
         
         // Boton Salir
         draw_set_color(c_maroon);
-        draw_rectangle(1366/2 - 150, 570, 1366/2 + 150, 635, false);
+        draw_rectangle(1366/2 - 160, 550, 1366/2 + 160, 605, false);
         draw_set_color(c_white);
-        draw_text_transformed(1366/2, 590, "SALIR", 1.8, 1.8, 0);
+        draw_text_transformed(1366/2, 568, "SALIR", 1.8, 1.8, 0);
     } else {
         // Solo Jugar
         draw_set_color(c_green);
-        draw_rectangle(1366/2 - 150, 370, 1366/2 + 150, 440, false);
+        draw_rectangle(1366/2 - 160, 310, 1366/2 + 160, 370, false);
         draw_set_color(c_black);
-        draw_text_transformed(1366/2, 395, "JUGAR", 2, 2, 0);
+        draw_text_transformed(1366/2, 330, "JUGAR HISTORIA", 1.8, 1.8, 0);
+        
+        // Boton Modo Infinito
+        draw_set_color(make_color_rgb(130, 40, 175));
+        draw_rectangle(1366/2 - 160, 385, 1366/2 + 160, 445, false);
+        draw_set_color(c_yellow);
+        draw_rectangle(1366/2 - 160, 385, 1366/2 + 160, 445, true);
+        draw_set_color(c_white);
+        draw_text_transformed(1366/2, 405, txt_infinito, 1.6, 1.6, 0);
         
         // Boton Ajustes
         draw_set_color(c_gray);
-        draw_rectangle(1366/2 - 150, 460, 1366/2 + 150, 530, false);
+        draw_rectangle(1366/2 - 160, 460, 1366/2 + 160, 520, false);
         draw_set_color(c_black);
-        draw_text_transformed(1366/2, 485, "AJUSTES", 2, 2, 0);
+        draw_text_transformed(1366/2, 480, "AJUSTES", 1.8, 1.8, 0);
         
         // Boton Salir
         draw_set_color(c_maroon);
-        draw_rectangle(1366/2 - 150, 550, 1366/2 + 150, 620, false);
+        draw_rectangle(1366/2 - 160, 535, 1366/2 + 160, 595, false);
         draw_set_color(c_white);
-        draw_text_transformed(1366/2, 575, "SALIR", 2, 2, 0);
+        draw_text_transformed(1366/2, 555, "SALIR", 1.8, 1.8, 0);
     }
 } else {
     // Menu de Ajustes

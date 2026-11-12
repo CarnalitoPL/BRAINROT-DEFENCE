@@ -1,9 +1,17 @@
+display_set_gui_size(1366, 768);
+global.velocidad_juego = 1;
+game_set_speed(60, gamespeed_fps);
+
 global.vida_maxima = 100;
 global.vida = global.vida_maxima;
 global.dinero = 60; // Se ajusta por nivel mas abajo
 global.oleada = 1;
 alarm[0] = 60; // Spawner timer
 estado_colocacion = 0;
+arrastrando_torre = false;
+arrastre_ha_movido = false;
+arrastre_inicio_x = 0;
+arrastre_inicio_y = 0;
 torre_seleccionada = noone;
 global.estado_juego = "jugando";
 
@@ -15,7 +23,51 @@ waves = [];
 siguiente_nivel = noone; // Room a la que lleva "Continuar" al ganar (noone = ultimo nivel)
 tiempo_victoria = -1;
 
-if (room == Rm_Ciudad) {
+if (!variable_global_exists("modo_infinito")) {
+    global.modo_infinito = false;
+}
+
+ini_open("save.ini");
+record_infinita = ini_read_real("Record", "OleadaInfinita", 0);
+ini_close();
+
+generar_oleada_infinita = function(_oleada) {
+    var _subwaves = [];
+    
+    // Peces normales
+    var _cant_pez = (8 + _oleada * 3) * (1 + floor((_oleada - 5) / 5)); // Double each 5 waves
+    var _delay_pez = max(12, 45 - min(30, _oleada * 2));
+    array_push(_subwaves, { obj: Obj_EnemigoPez, count: _cant_pez, delay: _delay_pez });
+    
+    // Peces piedra (oleada >= 3)
+    if (_oleada >= 3) {
+        var _cant_piedra = 2 + floor(_oleada * 1.2);
+        var _delay_piedra = max(20, 50 - min(25, _oleada * 2));
+        array_push(_subwaves, { obj: Obj_EnemigoPezPiedra, count: _cant_piedra, delay: _delay_piedra });
+    }
+    
+    // Pulpos camuflados (oleada >= 5)
+    if (_oleada >= 5) {
+        var _cant_pulpo = 3 + floor((_oleada - 4) * 1.5);
+        var _delay_pulpo = max(20, 45 - min(20, _oleada * 2));
+        array_push(_subwaves, { obj: Obj_EnemigoPulpo, count: _cant_pulpo, delay: _delay_pulpo });
+    }
+    
+    // Horda especial cada 5 oleadas
+    if (_oleada % 5 == 0) {
+        array_push(_subwaves, { obj: Obj_EnemigoPezPiedra, count: 5 + _oleada, delay: 15 });
+        array_push(_subwaves, { obj: Obj_EnemigoPulpo, count: 5 + _oleada, delay: 15 });
+    }
+    
+    return _subwaves;
+};
+
+if (global.modo_infinito) {
+    global.dinero = 100;
+    siguiente_nivel = noone;
+    waves[0] = generar_oleada_infinita(1);
+    global.oleada_maxima = 999;
+} else if (room == Rm_Ciudad) {
     global.dinero = 60;
     siguiente_nivel = Rm_Bosque;
     waves[0] = [ {obj: Obj_EnemigoPez, count: 5, delay: 60} ];
@@ -38,7 +90,9 @@ if (room == Rm_Ciudad) {
     waves[0] = [ {obj: Obj_EnemigoPez, count: 5, delay: 60} ];
 }
 
-global.oleada_maxima = array_length(waves);
+if (!global.modo_infinito) {
+    global.oleada_maxima = array_length(waves);
+}
 
 // ================= Economia =================
 // Datos de la tienda, indexados por estado_colocacion (1-4)

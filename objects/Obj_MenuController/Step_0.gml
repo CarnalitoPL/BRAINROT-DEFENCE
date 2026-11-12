@@ -4,8 +4,9 @@ if (mouse_check_button_pressed(mb_left)) {
     
     if (!en_ajustes) {
         if (nivel_guardado != "") {
-            // Clic en Continuar
-            if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 330 && my < 395) {
+            // Clic en Continuar (270 - 325)
+            if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 270 && my < 325) {
+                global.modo_infinito = false;
                 var rm = asset_get_index(nivel_guardado);
                 if (rm != -1) {
                     room_goto(rm);
@@ -15,9 +16,9 @@ if (mouse_check_button_pressed(mb_left)) {
                     room_goto(Rm_Historia);
                 }
             }
-            // Clic en Nueva Partida
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 410 && my < 475) {
-                // Solo se borra el progreso; los ajustes [Config] se conservan
+            // Clic en Nueva Partida (340 - 395)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 340 && my < 395) {
+                global.modo_infinito = false;
                 ini_open("save.ini");
                 ini_section_delete("Progreso");
                 ini_close();
@@ -25,17 +26,23 @@ if (mouse_check_button_pressed(mb_left)) {
                 global.historia_siguiente_room = Rm_Ciudad;
                 room_goto(Rm_Historia);
             }
-            // Clic en Ajustes
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 490 && my < 555) {
+            // Clic en Modo Infinito (410 - 465)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 410 && my < 465) {
+                global.modo_infinito = true;
+                room_goto(Rm_Mar);
+            }
+            // Clic en Ajustes (480 - 535)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 480 && my < 535) {
                 en_ajustes = true;
             }
-            // Clic en Salir
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 570 && my < 635) {
+            // Clic en Salir (550 - 605)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 550 && my < 605) {
                 game_end();
             }
         } else {
-            // Clic en Jugar
-            if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 370 && my < 440) {
+            // Clic en Jugar Historia (310 - 370)
+            if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 310 && my < 370) {
+                global.modo_infinito = false;
                 ini_open("save.ini");
                 ini_section_delete("Progreso");
                 ini_close();
@@ -43,12 +50,17 @@ if (mouse_check_button_pressed(mb_left)) {
                 global.historia_siguiente_room = Rm_Ciudad;
                 room_goto(Rm_Historia);
             }
-            // Clic en Ajustes
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 460 && my < 530) {
+            // Clic en Modo Infinito (385 - 445)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 385 && my < 445) {
+                global.modo_infinito = true;
+                room_goto(Rm_Mar);
+            }
+            // Clic en Ajustes (460 - 520)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 460 && my < 520) {
                 en_ajustes = true;
             }
-            // Clic en Salir
-            else if (mx > 1366/2 - 150 && mx < 1366/2 + 150 && my > 550 && my < 620) {
+            // Clic en Salir (535 - 595)
+            else if (mx > 1366/2 - 160 && mx < 1366/2 + 160 && my > 535 && my < 595) {
                 game_end();
             }
         }

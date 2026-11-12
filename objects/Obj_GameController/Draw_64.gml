@@ -1,3 +1,4 @@
+gpu_set_texfilter(false);
 draw_set_font(Fnt_juego);
 // 1. Barra de Vida Grafica
 var barra_x = 20;
@@ -40,7 +41,9 @@ draw_set_color(c_white);
 // 3. Contador de Oleadas (Centro Superior)
 var gui_w = display_get_gui_width();
 var oleada_txt = "";
-if (global.oleada <= global.oleada_maxima) {
+if (global.modo_infinito) {
+    oleada_txt = "Modo Infinito - Oleada: " + string(global.oleada);
+} else if (global.oleada <= global.oleada_maxima) {
     oleada_txt = "Oleada: " + string(global.oleada) + " / " + string(global.oleada_maxima);
 } else {
     oleada_txt = "Oleada: FINALIZADA";
@@ -64,28 +67,35 @@ draw_text(gui_w / 2, 25, oleada_txt);
 draw_set_halign(fa_left);
 draw_set_valign(fa_top);
 
+// Boton de Velocidad (1140, 10 a 1240, 50)
+var col_spd = make_color_rgb(50, 50, 60);
+if (global.velocidad_juego == 2) col_spd = make_color_rgb(200, 120, 20); // Naranja para 2x
+else if (global.velocidad_juego == 3) col_spd = make_color_rgb(180, 40, 40); // Rojo para 3x
+draw_set_color(col_spd);
+draw_rectangle(1140, 10, 1240, 50, false);
+draw_set_color(c_white);
+draw_rectangle(1140, 10, 1240, 50, true);
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
+draw_text(1190, 30, string(global.velocidad_juego) + "x");
+
 // Boton de Pausa (1250, 10 a 1350, 50)
 draw_set_color(c_gray);
 draw_rectangle(1250, 10, 1350, 50, false);
 draw_set_color(c_white);
+draw_rectangle(1250, 10, 1350, 50, true);
+draw_set_halign(fa_center);
+draw_set_valign(fa_middle);
 var txt_pausa = (global.estado_juego == "pausado") ? "Reanudar" : "Pausa";
-draw_text(1260, 20, txt_pausa);
+draw_text(1300, 30, txt_pausa);
+draw_set_halign(fa_left);
+draw_set_valign(fa_top);
 
 if (global.estado_juego == "jugando" && estado_oleada == "aviso") {
     draw_set_halign(fa_center);
     draw_set_valign(fa_middle);
     draw_set_color(c_red);
     draw_text_transformed(1366/2, 768/2, "OLEADA " + string(global.oleada), 4, 4, 0);
-    draw_set_color(c_white);
-    draw_set_halign(fa_left);
-    draw_set_valign(fa_top);
-}
-
-if (global.estado_juego == "victoria") {
-    draw_set_halign(fa_center);
-    draw_set_valign(fa_middle);
-    draw_set_color(c_yellow);
-    draw_text_transformed(1366/2, 768/2, "¡VICTORIA!", 4, 4, 0);
     draw_set_color(c_white);
     draw_set_halign(fa_left);
     draw_set_valign(fa_top);
@@ -282,24 +292,67 @@ if (global.estado_juego == "jugando" || global.estado_juego == "pausado") {
     }
 }
 
-// Pantallas de Derrota y Pausa
-if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
+// Pantallas de Derrota, Victoria y Pausa
+if (global.estado_juego == "game_over" || global.estado_juego == "pausado" || global.estado_juego == "victoria") {
     if (global.estado_juego == "pausado" && sprite_exists(pause_sprite)) {
         draw_sprite_stretched(pause_sprite, 0, 0, 0, display_get_gui_width(), display_get_gui_height());
     }
     
     // Fondo semitransparente
     draw_set_color(c_black);
-    draw_set_alpha(0.7);
+    draw_set_alpha(0.75);
     draw_rectangle(0, 0, 1366, 768, false);
     draw_set_alpha(1.0);
     
     draw_set_color(c_white);
     draw_set_halign(fa_center);
+    draw_set_valign(fa_middle);
     
     if (global.estado_juego == "game_over") {
-        draw_text_transformed(1366/2, 150, "GAME OVER", 3, 3, 0);
-        draw_text(1366/2, 220, "Bombardilo Cocodrilo gano...");
+        draw_set_color(c_red);
+        draw_text_transformed(1366/2, 140, "GAME OVER", 3, 3, 0);
+        draw_set_color(c_white);
+        if (global.modo_infinito) {
+            draw_text(1366/2, 205, "Llegaste a la Oleada: " + string(global.oleada));
+            draw_set_color(c_yellow);
+            draw_text(1366/2, 235, "Record: Oleada " + string(record_infinita));
+        } else {
+            draw_text(1366/2, 220, "Bombardilo Cocodrilo gano...");
+        }
+        
+        draw_set_color(c_maroon);
+        draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
+        draw_set_color(c_white);
+        draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, true);
+        
+        draw_set_color(c_teal);
+        draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
+        draw_set_color(c_white);
+        draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, true);
+        
+        draw_set_color(c_white);
+        draw_text(1366/2 - 80, 325, "Reiniciar");
+        draw_text(1366/2 + 80, 325, "Menu Principal");
+    } else if (global.estado_juego == "victoria") {
+        draw_set_color(c_yellow);
+        draw_text_transformed(1366/2, 160, "¡VICTORIA!", 3, 3, 0);
+        draw_set_color(c_white);
+        draw_text(1366/2, 230, "¡Nivel completado con exito!");
+        
+        // Boton Volver al Menu Principal (Izquierda)
+        draw_set_color(c_maroon);
+        draw_rectangle(1366/2 - 170, 320, 1366/2 - 10, 370, false);
+        draw_set_color(c_white);
+        draw_rectangle(1366/2 - 170, 320, 1366/2 - 10, 370, true);
+        draw_text(1366/2 - 90, 345, "Menu Principal");
+        
+        // Boton Siguiente Nivel / Continuar (Derecha)
+        draw_set_color(c_teal);
+        draw_rectangle(1366/2 + 10, 320, 1366/2 + 170, 370, false);
+        draw_set_color(c_white);
+        draw_rectangle(1366/2 + 10, 320, 1366/2 + 170, 370, true);
+        var _txt_sig = (room == Rm_Mar) ? "Ver Final" : "Siguiente Nivel";
+        draw_text(1366/2 + 90, 345, _txt_sig);
     } else if (global.estado_juego == "pausado") {
         if (!en_ajustes) {
             draw_text_transformed(1366/2, 150, "PAUSA", 3, 3, 0);
@@ -312,9 +365,9 @@ if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
             draw_rectangle(1366/2 - 150, 380, 1366/2 + 150, 430, false);
             
             draw_set_color(c_white);
-            draw_text(1366/2 - 80, 315, "Reanudar");
-            draw_text(1366/2 + 80, 315, "Salir al Menu");
-            draw_text(1366/2, 395, "Ajustes");
+            draw_text(1366/2 - 80, 325, "Reanudar");
+            draw_text(1366/2 + 80, 325, "Salir al Menu");
+            draw_text(1366/2, 405, "Ajustes");
         } else {
             // Menu de Ajustes
             draw_set_color(c_black);
@@ -331,8 +384,8 @@ if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
             draw_rectangle(1366/2 - 150, 150, 1366/2 - 100, 195, false); // [-]
             draw_rectangle(1366/2 + 100, 150, 1366/2 + 150, 195, false); // [+]
             draw_set_color(c_black);
-            draw_text(1366/2 - 125, 160, "-");
-            draw_text(1366/2 + 125, 160, "+");
+            draw_text(1366/2 - 125, 172, "-");
+            draw_text(1366/2 + 125, 172, "+");
             
             // SFX
             draw_set_color(c_white);
@@ -341,44 +394,35 @@ if (global.estado_juego == "game_over" || global.estado_juego == "pausado") {
             draw_rectangle(1366/2 - 150, 220, 1366/2 - 100, 265, false); // [-]
             draw_rectangle(1366/2 + 100, 220, 1366/2 + 150, 265, false); // [+]
             draw_set_color(c_black);
-            draw_text(1366/2 - 125, 230, "-");
-            draw_text(1366/2 + 125, 230, "+");
+            draw_text(1366/2 - 125, 242, "-");
+            draw_text(1366/2 + 125, 242, "+");
             
             // Pantalla Completa
             var txt_fs = global.fullscreen ? "Pantalla Completa: SI" : "Pantalla Completa: NO";
             draw_set_color(c_teal);
             draw_rectangle(1366/2 - 200, 290, 1366/2 + 200, 340, false);
             draw_set_color(c_black);
-            draw_text(1366/2, 302, txt_fs);
+            draw_text(1366/2, 315, txt_fs);
             
             // Barra de Vida en Peces
             var txt_vida = global.mostrar_vida_enemigos ? "Vida en Peces: SI" : "Vida en Peces: NO";
             draw_set_color(c_teal);
             draw_rectangle(1366/2 - 200, 360, 1366/2 + 200, 410, false);
             draw_set_color(c_black);
-            draw_text(1366/2, 372, txt_vida);
+            draw_text(1366/2, 385, txt_vida);
             
             // Boton Volver
             draw_set_color(c_maroon);
             draw_rectangle(1366/2 - 150, 460, 1366/2 + 150, 510, false);
             draw_set_color(c_white);
-            draw_text(1366/2, 472, "VOLVER");
+            draw_text(1366/2, 485, "VOLVER");
         }
     }
 
-    // Botones de Game Over
-    if (global.estado_juego == "game_over") {
-        draw_set_color(c_maroon);
-        draw_rectangle(1366/2 - 150, 300, 1366/2 - 10, 350, false);
-        draw_set_color(c_teal);
-        draw_rectangle(1366/2 + 10, 300, 1366/2 + 150, 350, false);
-        draw_set_color(c_white);
-        draw_text(1366/2 - 80, 315, "Reiniciar");
-        draw_text(1366/2 + 80, 315, "Menu Principal");
-    }
-
     draw_set_halign(fa_left);
+    draw_set_valign(fa_top);
 }
+
 
 // Oscurecimiento mientras se mantiene R para reiniciar (encima de todo)
 if (tiempo_reinicio > 0) {
