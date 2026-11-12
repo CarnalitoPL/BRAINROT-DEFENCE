@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.38124716,
+  "duration":1.4506803,
   "exportDir":"",
   "name":"Snd_CapuchinoGolpe",
   "parent":{

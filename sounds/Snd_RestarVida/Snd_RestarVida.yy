@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.36571428,
+  "duration":1.1733333,
   "exportDir":"",
   "name":"Snd_RestarVida",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Snd_RestarVida.mp3",
+  "soundFile":"Snd_RestarVida.wav",
   "volume":1.0,
 }

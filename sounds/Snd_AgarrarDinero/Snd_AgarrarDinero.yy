@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.0448979,
+  "duration":1.8346713,
   "exportDir":"",
   "name":"Snd_AgarrarDinero",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Snd_AgarrarDinero.mp3",
+  "soundFile":"Snd_AgarrarDinero.wav",
   "volume":1.0,
 }

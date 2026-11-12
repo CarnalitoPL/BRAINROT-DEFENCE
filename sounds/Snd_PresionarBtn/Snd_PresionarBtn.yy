@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":0.28800455,
+  "duration":0.8959864,
   "exportDir":"",
   "name":"Snd_PresionarBtn",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Snd_PresionarBtn.mp3",
+  "soundFile":"Snd_PresionarBtn.wav",
   "volume":1.0,
 }

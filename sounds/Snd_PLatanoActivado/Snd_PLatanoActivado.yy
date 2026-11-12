@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.0681179,
+  "duration":1.4080045,
   "exportDir":"",
   "name":"Snd_PLatanoActivado",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Snd_PLatanoActivado.mp3",
+  "soundFile":"Snd_PLatanoActivado.wav",
   "volume":1.0,
 }

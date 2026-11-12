@@ -34,29 +34,29 @@ ini_close();
 generar_oleada_infinita = function(_oleada) {
     var _subwaves = [];
     
-    // Peces normales
-    var _cant_pez = (8 + _oleada * 3) * (1 + floor((_oleada - 5) / 5)); // Double each 5 waves
-    var _delay_pez = max(12, 45 - min(30, _oleada * 2));
+    // Peces normales - siempre presentes, escalan gradualmente
+    var _cant_pez = 10 + _oleada * 2;
+    var _delay_pez = max(15, 45 - _oleada);
     array_push(_subwaves, { obj: Obj_EnemigoPez, count: _cant_pez, delay: _delay_pez });
     
-    // Peces piedra (oleada >= 3)
-    if (_oleada >= 3) {
-        var _cant_piedra = 2 + floor(_oleada * 1.2);
-        var _delay_piedra = max(20, 50 - min(25, _oleada * 2));
+    // Peces piedra (oleada >= 7) - aparecen tarde para dar chance de equiparse
+    if (_oleada >= 7) {
+        var _cant_piedra = 1 + floor((_oleada - 6) * 0.8);
+        var _delay_piedra = max(25, 55 - _oleada);
         array_push(_subwaves, { obj: Obj_EnemigoPezPiedra, count: _cant_piedra, delay: _delay_piedra });
     }
     
-    // Pulpos camuflados (oleada >= 5)
-    if (_oleada >= 5) {
-        var _cant_pulpo = 3 + floor((_oleada - 4) * 1.5);
-        var _delay_pulpo = max(20, 45 - min(20, _oleada * 2));
+    // Pulpos camuflados (oleada >= 10)
+    if (_oleada >= 10) {
+        var _cant_pulpo = 1 + floor((_oleada - 9) * 0.7);
+        var _delay_pulpo = max(25, 50 - _oleada);
         array_push(_subwaves, { obj: Obj_EnemigoPulpo, count: _cant_pulpo, delay: _delay_pulpo });
     }
     
-    // Horda especial cada 5 oleadas
-    if (_oleada % 5 == 0) {
-        array_push(_subwaves, { obj: Obj_EnemigoPezPiedra, count: 5 + _oleada, delay: 15 });
-        array_push(_subwaves, { obj: Obj_EnemigoPulpo, count: 5 + _oleada, delay: 15 });
+    // Horda especial cada 10 oleadas
+    if (_oleada >= 10 && _oleada % 10 == 0) {
+        array_push(_subwaves, { obj: Obj_EnemigoPezPiedra, count: 3 + floor(_oleada / 2), delay: 20 });
+        array_push(_subwaves, { obj: Obj_EnemigoPulpo, count: 3 + floor(_oleada / 2), delay: 20 });
     }
     
     return _subwaves;

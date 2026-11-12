@@ -10,7 +10,7 @@
   "compression":0,
   "compressionQuality":4,
   "conversionMode":0,
-  "duration":1.0165986,
+  "duration":0.579025,
   "exportDir":"",
   "name":"Snd_TripleTGolpe",
   "parent":{
@@ -21,6 +21,6 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"Snd_TripleTGolpe.mp3",
+  "soundFile":"Snd_TripleTGolpe.wav",
   "volume":1.0,
 }
